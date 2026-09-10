@@ -1,154 +1,266 @@
-export type CrowdLevel = 'Untouched' | 'Sparse' | 'Peaceful' | 'Moderate';
+// ============================================================
+// YATRA MITRA — DOMAIN MODEL
+// Hyderabad MVP (Smart India Hackathon 2026)
+// ============================================================
 
-export type Category = 
-  | 'Nature & Waterfalls' 
-  | 'Indigenous & Tribal Heritage' 
-  | 'Ancient Architecture' 
-  | 'High-Altitude Meadows' 
-  | 'Culinary & Spices' 
-  | 'Artisans & Handicrafts';
+// ---------- Taxonomy ----------
 
-export interface Destination {
+export const PLACE_CATEGORIES = [
+  'Qutb Shahi & Hyderabad Origins',
+  'Kakatiya & Medieval Heritage',
+  'Royal Hyderabad & Museums',
+  'Lakes, Reservoirs & Landscapes',
+  'Spiritual & Living Religious Heritage',
+  'Culture, Crafts & Entertainment',
+] as const;
+
+export type PlaceCategory = (typeof PLACE_CATEGORIES)[number];
+
+export type TourismPressure = 'Low' | 'Medium' | 'High';
+
+export type Interest =
+  | 'Heritage'
+  | 'Food'
+  | 'Culture'
+  | 'Architecture'
+  | 'Crafts'
+  | 'Photography'
+  | 'Local stories';
+
+export const INTERESTS: Interest[] = [
+  'Heritage',
+  'Food',
+  'Culture',
+  'Architecture',
+  'Crafts',
+  'Photography',
+  'Local stories',
+];
+
+export type CrowdPreference = 'Quiet' | 'Moderate' | 'Lively';
+export type TravelStyle = 'Slow' | 'Balanced' | 'Fast';
+export type DurationPreference = '2 hours' | '4 hours' | 'Full day';
+export type GroupPreference = 'Solo' | '2–3' | '4–5';
+
+export type VerificationStatus =
+  | 'verified'
+  | 'pending'
+  | 'workflow_completed'
+  | 'not_verified';
+
+// ---------- Places ----------
+
+export interface Place {
   id: string;
   name: string;
-  regionalName?: string;
-  state: string;
-  region: 'Eastern Ghats' | 'Northeast' | 'Himalayas' | 'Western Ghats' | 'Deccan Plateau' | 'Southern Coromandel';
-  category: Category;
-  crowdLevel: CrowdLevel;
-  rating: number;
-  reviewCount: number;
-  headline: string;
+  teluguName?: string;
+  category: PlaceCategory;
   description: string;
-  heroImage: string;
-  gallery: string[];
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-  whyVisit: string;
-  localStory: string;
-  culturalSignificance: string;
-  bestTimeToVisit: string;
-  howToReach: {
-    nearestAirport: string;
-    nearestRailhead: string;
-    roadAccess: string;
-  };
-  safetyGuidelines: string[];
-  localSecrets: {
-    title: string;
-    contributorName: string;
-    contributorBadge: string;
-    tip: string;
-  }[];
-  featured: boolean;
-  buddiesCount: number;
-  experiencesCount: number;
+  historicalSummary: string;
+  whyItMatters: string;
+  touristExplanation: string;
+  whatToNotice: string[];
+  guideLine?: string;
+  latitude: number | null;
+  longitude: number | null;
+  image: string;
+  imageAttribution?: string;
+  officialSource?: string;
+  tourismPressure: TourismPressure;
+  tourismPressureMethodology: string;
+  recommendedDuration: string;
+  bestTime: string;
+  timings?: string;
+  entryInfo?: string;
+  tags: string[];
+  contentStatus: 'verified' | 'requires_verification';
+  verificationNote?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export interface VerificationBadges {
-  identityVerified: boolean;
-  knowledgeAssessmentPassed: boolean;
-  safetyTrainingCompleted: boolean;
-}
-
-export interface LocalBuddy {
-  id: string;
-  name: string;
-  location: string;
-  state: string;
-  destinationId: string;
-  avatar: string;
-  coverImage?: string;
-  bio: string;
-  heritageConnection: string;
-  languages: string[];
-  specialties: string[];
-  rating: number;
-  reviewCount: number;
-  experienceCount: number;
-  knowledgeScore: number; // e.g. 98 out of 100
-  yearsOfResidency: number;
-  verificationBadges: VerificationBadges;
-  safetyCertifiedDate: string;
-  hostedTravelersCount: number;
-  quote: string;
-  experiencesOffered: string[]; // experience IDs
-}
+// ---------- Experiences ----------
 
 export interface Experience {
   id: string;
   title: string;
-  destinationId: string;
-  destinationName: string;
-  hostBuddyId: string;
-  hostName: string;
-  hostAvatar: string;
-  duration: string; // e.g. "3.5 hours"
-  pricePerPerson: number; // in INR e.g. 600
-  groupCap: number; // e.g. 4 people max
-  category: Category;
+  placeId: string;
+  placeName: string;
+  category: string;
   summary: string;
   description: string;
   image: string;
-  gallery: string[];
+  durationHours: number;
+  durationLabel: string;
+  groupCap: number;
+  pricePerPerson: number;
+  priceStatus: 'indicative' | 'field_validated';
+  priceNote: string;
+  typicalRange: { min: number; max: number };
   inclusions: string[];
-  requirements: string[];
-  meetingPoint: {
-    title: string;
-    landmark: string;
-    coordinatesText: string;
-  };
-  itinerary: {
-    timeSlot: string;
-    activity: string;
-    description: string;
-  }[];
-  safetyNotes: string[];
-  bookingNotice: string;
-  rating: number;
-  reviewCount: number;
+  interests: Interest[];
+  crowdLevel: TourismPressure;
+  travelStyle: TravelStyle;
+  languages: string[];
+  meetingPoint: string;
+  status: 'available' | 'prototype_availability';
+  mitraId: string;
+  tags: string[];
+  createdAt?: string;
 }
 
-export interface RecommendationMatch {
-  destination: Destination;
-  matchScore: number; // 0 - 100
-  aiReasoning: string;
-  verifiedLocalTip: string;
-  recommendedBuddy: LocalBuddy;
-  matchingExperience: Experience;
+// ---------- Mitras ----------
+
+export interface MitraVerification {
+  identityStatus: VerificationStatus;
+  residencyStatus: VerificationStatus;
+  knowledgeStatus: VerificationStatus;
+  safetyStatus: VerificationStatus;
+  referencesStatus: VerificationStatus;
+  updatedAt?: string;
 }
 
-export interface BookingDetails {
+export interface Mitra {
   id: string;
+  userId?: string;
+  name: string;
+  avatar: string;
+  bio: string;
+  location: string;
+  homePlaceId: string;
+  languages: string[];
+  specialities: string[];
+  categories: PlaceCategory[];
+  interests: Interest[];
+  experienceYears: number;
+  verificationStatus: VerificationStatus;
+  verification: MitraVerification;
+  trustScore: number;
+  trustScoreNote: string;
+  availability: string[];
+  isDemo: boolean;
+  quote?: string;
+  createdAt?: string;
+}
+
+// ---------- Traveller preferences ----------
+
+export interface TravellerPreferences {
+  interests: Interest[];
+  budget: number;
+  crowdPreference: CrowdPreference;
+  travelStyle: TravelStyle;
+  durationPreference: DurationPreference;
+  groupPreference: GroupPreference;
+  languages: string[];
+}
+
+// ---------- Recommendations ----------
+
+export interface RecommendationReason {
+  criterion: string;
+  detail: string;
+}
+
+export interface RecommendationResult {
+  matchScore: number;
+  scoreBreakdown: { criterion: string; weight: number; earned: number }[];
+  experience: Experience;
+  place: Place;
+  mitra: Mitra;
+  reasons: RecommendationReason[];
+}
+
+// ---------- Bookings ----------
+
+export type BookingStatus =
+  | 'booking_request_confirmed'
+  | 'confirmed'
+  | 'active'
+  | 'completed'
+  | 'cancelled';
+
+export interface Booking {
+  id: string;
+  userId: string;
   experienceId: string;
   experienceTitle: string;
-  destinationName: string;
-  buddyId: string;
-  buddyName: string;
-  buddyAvatar: string;
+  placeId: string;
+  placeName: string;
+  mitraId: string;
+  mitraName: string;
   date: string;
   timeSlot: string;
-  guestCount: number;
+  groupSize: number;
   pricePerPerson: number;
-  communityFundContribution: number;
   totalAmount: number;
-  travelerName: string;
-  travelerPhone: string;
-  travelerEmail: string;
-  meetingPoint: string;
-  status: 'Confirmed' | 'Active' | 'Completed';
+  mitraShare: number;
+  communityContribution: number;
+  status: BookingStatus;
+  isDemoBooking?: boolean;
   createdAt: string;
 }
 
-export interface Checkpoint {
+// ---------- Trips ----------
+
+export type CheckpointState = 'completed' | 'current' | 'upcoming';
+
+export interface TripCheckpoint {
   id: string;
   title: string;
-  time: string;
-  completed: boolean;
-  note?: string;
+  scheduledTime: string;
+  state: CheckpointState;
+  checkedInAt?: string;
 }
+
+export type TripStatus = 'not_started' | 'active' | 'completed';
+
+export interface Trip {
+  id: string;
+  bookingId: string;
+  userId: string;
+  experienceId: string;
+  experienceTitle: string;
+  mitraId: string;
+  mitraName: string;
+  status: TripStatus;
+  currentCheckpointId?: string;
+  checkpoints: TripCheckpoint[];
+  lastCheckInAt?: string;
+  startedAt?: string;
+  completedAt?: string;
+  createdAt: string;
+}
+
+// ---------- Reviews ----------
+
+export interface Review {
+  id: string;
+  bookingId: string;
+  userId: string;
+  experienceId: string;
+  experienceTitle: string;
+  mitraId: string;
+  rating: number;
+  comment: string;
+  verifiedYatra: true;
+  createdAt: string;
+}
+
+// ---------- Traveller matching ----------
+
+export interface TravellerMatch {
+  id: string;
+  displayName: string;
+  city: string;
+  sharedInterests: string[];
+  matchScore: number;
+  travelStyle: TravelStyle;
+  languages: string[];
+  isDemo: boolean;
+}
+
+// ---------- Homepage compatibility aliases ----------
 
 export interface HiddenGem {
   id: string;
@@ -172,4 +284,30 @@ export interface TravelMatch {
   avatar: string;
   travelStyle: string;
   upcomingDestination: string;
+}
+
+// ---------- Community impact ----------
+
+export interface TripImpact {
+  travellerSpend: number;
+  mitraEarnings: number;
+  communityContribution: number;
+  localBusinessesEstimate: number;
+  label: string;
+  modelNote: string;
+}
+
+// ---------- Auth ----------
+
+export type UserRole = 'traveller' | 'mitra' | 'admin';
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar?: string;
+  isDemo?: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

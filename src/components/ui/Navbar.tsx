@@ -3,12 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Compass, Menu, X, ArrowRight } from 'lucide-react';
+import { Compass, Menu, X, ArrowRight, Route } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import DemoBadge from './DemoBadge';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,17 +22,18 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Discover', href: '/discover' },
+    { name: 'Explore', href: '/explore' },
+    { name: 'Find My Yatra', href: '/find-my-yatra' },
     { name: 'Experiences', href: '/experiences' },
-    { name: 'Local Mitras', href: '/mitras' },
-    { name: 'How It Works', href: '/#how-it-works' },
+    { name: 'Mitras', href: '/mitras' },
+    { name: 'How It Works', href: '/how-it-works' },
   ];
 
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#16352A]/95 text-[#F5F1E8] backdrop-blur-md shadow-md border-b border-[#B8955A]/20 py-3.5'
+          ? 'bg-[#16352A]/95 text-[#F5F1E8] backdrop-blur-md shadow-md border-b border-[#B8955A]/20 py-3'
           : 'bg-gradient-to-b from-[#0D211A]/90 via-[#0D211A]/60 to-transparent text-[#F5F1E8] py-5'
       }`}
     >
@@ -45,22 +49,22 @@ export default function Navbar() {
                 YATRA MITRA
               </span>
               <span className="text-[10px] tracking-[0.2em] text-[#B8955A] uppercase font-semibold block mt-1">
-                HIDDEN INDIA
+                HYDERABAD · TELANGANA
               </span>
             </div>
           </Link>
 
           {/* Center Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-4">
+          <nav className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
               return (
                 <Link
                   key={link.name}
                   href={link.href}
                   className={`px-3 py-2 text-sm font-medium tracking-wide transition-colors rounded-md ${
                     isActive
-                      ? 'text-[#B8955A] font-semibold bg-white/10'
+                      ? 'text-[#DFB86C] font-semibold bg-white/10'
                       : 'text-[#E8DFCF] hover:text-[#FFFFFF] hover:bg-white/5'
                   }`}
                 >
@@ -71,13 +75,21 @@ export default function Navbar() {
           </nav>
 
           {/* Right Action Links */}
-          <div className="hidden lg:flex items-center gap-4">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors"
-            >
-              Sign In
-            </Link>
+          <div className="hidden lg:flex items-center gap-3">
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-[#B8955A]/50 text-[#F5F1E8] font-semibold text-sm hover:bg-white/10 transition-colors"
+              >
+                <Route className="w-4 h-4 text-[#DFB86C]" />
+                <span>My Yatra</span>
+                {user.isDemo && <DemoBadge />}
+              </Link>
+            ) : (
+              <Link href="/login" className="text-sm font-medium text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
+                Sign In
+              </Link>
+            )}
             <Link
               href="/become-mitra"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A] font-semibold text-sm shadow-sm transition-all transform hover:-translate-y-0.5"
@@ -88,12 +100,12 @@ export default function Navbar() {
           </div>
 
           {/* Mobile menu trigger */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-2">
             <Link
-              href="/discover"
+              href="/find-my-yatra"
               className="px-3 py-1.5 text-xs font-semibold rounded bg-[#B8955A] text-[#0D211A]"
             >
-              Discover
+              Find My Yatra
             </Link>
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -109,7 +121,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-[#0D211A]/95 backdrop-blur-xl border-b border-[#B8955A]/30 px-5 pt-3 pb-6 space-y-3 mt-3 shadow-xl">
+        <div className="lg:hidden bg-[#0D211A]/95 backdrop-blur-xl border-b border-[#B8955A]/30 px-5 pt-3 pb-6 space-y-3 mt-3 shadow-xl">
           <div className="flex flex-col space-y-1">
             {navLinks.map((link) => (
               <Link
@@ -123,13 +135,23 @@ export default function Navbar() {
             ))}
           </div>
           <div className="pt-3 border-t border-white/10 flex flex-col gap-2.5">
-            <Link
-              href="/login"
-              onClick={() => setIsOpen(false)}
-              className="w-full text-center px-4 py-2.5 rounded-md border border-[#B8955A]/40 text-[#F5F1E8] font-medium text-sm"
-            >
-              Sign In
-            </Link>
+            {user ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setIsOpen(false)}
+                className="w-full text-center px-4 py-2.5 rounded-md border border-[#B8955A]/40 text-[#F5F1E8] font-medium text-sm"
+              >
+                My Yatra
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="w-full text-center px-4 py-2.5 rounded-md border border-[#B8955A]/40 text-[#F5F1E8] font-medium text-sm"
+              >
+                Sign In
+              </Link>
+            )}
             <Link
               href="/become-mitra"
               onClick={() => setIsOpen(false)}

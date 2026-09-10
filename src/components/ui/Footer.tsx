@@ -18,10 +18,10 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-[#E8DFCF] max-w-sm leading-relaxed">
-              Hidden places. Local stories. Real connections.
+              Discover Hyderabad beyond the usual.
             </p>
             <p className="text-xs text-[#E8DFCF]/70 max-w-md leading-relaxed">
-              An authentic travel platform connecting conscious travellers with verified local custodians across the unmapped regions of India.
+              A responsible-tourism platform connecting travellers with local Mitras across 24 real heritage places — with fair prices, transparent trust and live-trip safety.
             </p>
             <div className="flex items-center gap-2 text-xs text-[#B8955A] pt-2">
               <ShieldCheck className="w-4 h-4 text-[#B8955A]" />
@@ -36,8 +36,8 @@ export default function Footer() {
             </p>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link href="/discover" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
-                  Discover
+                <Link href="/explore" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
+                  Explore the Map
                 </Link>
               </li>
               <li>
@@ -51,8 +51,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/place/hyderabad" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
-                  Hyderabad Demo Hub
+                <Link href="/find-my-yatra" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
+                  Find My Yatra
+                </Link>
+              </li>
+              <li>
+                <Link href="/price-check" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
+                  Price Check
                 </Link>
               </li>
             </ul>
@@ -65,23 +70,23 @@ export default function Footer() {
             </p>
             <ul className="space-y-2.5 text-sm">
               <li>
+                <Link href="/how-it-works" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
+                  How It Works
+                </Link>
+              </li>
+              <li>
                 <Link href="/become-mitra" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
                   Become a Mitra
                 </Link>
               </li>
               <li>
-                <Link href="/#trust" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
-                  Safety & Verification
-                </Link>
-              </li>
-              <li>
                 <Link href="/dashboard" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
-                  Traveller Dashboard
+                  My Yatra (Dashboard)
                 </Link>
               </li>
               <li>
-                <Link href="/#beyond-map" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
-                  About Our Mission
+                <Link href="/#trust" className="text-[#E8DFCF] hover:text-[#FFFFFF] transition-colors">
+                  Trust & Safety
                 </Link>
               </li>
             </ul>
@@ -91,9 +96,9 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-14 pt-8 border-t border-[#16352A] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#E8DFCF]/60">
           <p>© {new Date().getFullYear()} YATRA MITRA. All rights reserved. Made for SIH 2026.</p>
-          <div className="flex items-center space-x-6 text-xs text-[#E8DFCF]/70">
-            <Link href="/#beyond-map" className="hover:text-[#FFFFFF] transition-colors">Trust Manifesto</Link>
-            <Link href="/#trust" className="hover:text-[#FFFFFF] transition-colors">Ecosystem Fund</Link>
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-6 gap-y-2 text-xs text-[#E8DFCF]/70">
+            <Link href="/how-it-works" className="hover:text-[#FFFFFF] transition-colors">Trust & Transparency</Link>
+            <Link href="/price-check" className="hover:text-[#FFFFFF] transition-colors">Fair Price Guide</Link>
             <Link href="/become-mitra" className="hover:text-[#FFFFFF] transition-colors">Host Guidelines</Link>
           </div>
         </div>

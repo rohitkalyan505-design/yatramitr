@@ -2,344 +2,244 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { 
-  MapPin, 
-  Star, 
-  ShieldCheck, 
-  Users, 
-  Clock, 
-  Compass, 
-  ArrowRight, 
-  CheckCircle2, 
-  AlertCircle, 
-  Plane, 
-  Train, 
-  Car,
-  Lightbulb,
-  HeartHandshake
+import {
+  MapPin, Clock, Star, ShieldCheck, Info, Compass, Landmark,
+  ExternalLink, ArrowRight, AlertCircle, Users,
 } from 'lucide-react';
-import { MOCK_DESTINATIONS, MOCK_BUDDIES, MOCK_EXPERIENCES } from '@/data/mock-data';
-import ExperienceCard from '@/components/experiences/ExperienceCard';
-import BuddyCard from '@/components/buddies/BuddyCard';
+import { getPlaceById, PLACES } from '@/data/places';
+import { EXPERIENCES, getMitraById } from '@/data/experiences';
+import ExperienceCard from '@/components/ui/ExperienceCard';
+import { PLACE_CATEGORIES } from '@/types';
 
 export function generateStaticParams() {
-  return MOCK_DESTINATIONS.map((destination) => ({
-    id: destination.id,
-  }));
+  return PLACES.map((p) => ({ id: p.id }));
 }
 
-export default function PlaceDetailsPage({ params }: { params: { id: string } }) {
-  const destination = MOCK_DESTINATIONS.find((d) => d.id === params.id);
+export default function PlacePage({ params }: { params: { id: string } }) {
+  const place = getPlaceById(params.id);
+  if (!place) notFound();
 
-  if (!destination) {
-    notFound();
-  }
+  const placeExperiences = EXPERIENCES.filter((e) => e.placeId === place.id);
+  const mitras = Array.from(new Set(placeExperiences.map((e) => e.mitraId)))
+    .map((id) => getMitraById(id))
+    .filter(Boolean);
 
-  // Related Buddies for this place
-  const relatedBuddies = MOCK_BUDDIES.filter((b) => b.destinationId === destination.id);
-  // Fallback if no specific buddy mapped
-  const displayBuddies = relatedBuddies.length > 0 ? relatedBuddies : [MOCK_BUDDIES[0]];
-
-  // Related Experiences for this place
-  const relatedExperiences = MOCK_EXPERIENCES.filter((e) => e.destinationId === destination.id);
-  const displayExperiences = relatedExperiences.length > 0 ? relatedExperiences : [MOCK_EXPERIENCES[0]];
+  const pressureColor =
+    place.tourismPressure === 'Low' ? '#2D7A4F' : place.tourismPressure === 'Medium' ? '#C5A059' : '#BD5338';
 
   return (
     <div className="space-y-14 sm:space-y-20 pb-20">
-      {/* 1. Immersive Hero Banner */}
-      <section className="relative w-full min-h-[55vh] sm:min-h-[65vh] flex flex-col justify-end bg-forest-950 text-sand-50 overflow-hidden">
+      {/* 1. Hero */}
+      <section className="relative w-full min-h-[55vh] sm:min-h-[62vh] flex flex-col justify-end bg-[#0D211A] text-[#F5F1E8] overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image
-            src={destination.heroImage}
-            alt={destination.name}
-            fill
-            priority
-            className="object-cover opacity-60 scale-105 transition-transform duration-1000"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/40 to-transparent" />
+          {place.image ? (
+            <Image src={place.image} alt={place.name} fill priority className="object-cover opacity-60" />
+          ) : (
+            <div className="absolute inset-0 bg-topo-pattern opacity-50" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D211A] via-[#0D211A]/50 to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 w-full space-y-4">
-          {/* Breadcrumb & Verification Badge */}
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <Link href="/" className="text-sand-300 hover:text-sand-50">Home</Link>
-            <span className="text-sand-500">/</span>
-            <Link href="/discover" className="text-sand-300 hover:text-sand-50">Destinations</Link>
-            <span className="text-sand-500">/</span>
-            <span className="text-gold-400 font-semibold">{destination.name}</span>
-            <span className="ml-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-900/90 border border-gold-500/40 text-gold-300 text-xs font-bold backdrop-blur-sm">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Verified Local Route
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <Link href="/" className="text-[#E8DFCF] hover:text-white">Home</Link>
+            <span className="text-[#B8955A]">/</span>
+            <Link href="/explore" className="text-[#E8DFCF] hover:text-white">Explore</Link>
+            <span className="text-[#B8955A]">/</span>
+            <span className="text-[#DFB86C] font-semibold">{place.name}</span>
+          </div>
+
+          <div className="space-y-2 max-w-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#DFB86C]">{place.category}</span>
+            <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-white">
+              {place.name}
+            </h1>
+            {place.teluguName && <p className="font-serif text-xl text-[#E8DFCF]">{place.teluguName}</p>}
+            <p className="text-sm sm:text-lg text-[#E8DFCF] leading-relaxed max-w-2xl">{place.description}</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-bold"
+              style={{ backgroundColor: `${pressureColor}33`, color: '#F5F1E8', border: `1px solid ${pressureColor}` }}
+            >
+              <Users className="w-3.5 h-3.5" /> {place.tourismPressure} tourism pressure
             </span>
-          </div>
-
-          <div className="max-w-4xl space-y-2">
-            <div className="flex items-baseline gap-3">
-              <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-sand-50">
-                {destination.name}
-              </h1>
-              {destination.regionalName && (
-                <span className="font-serif text-xl sm:text-2xl text-sand-300 italic">
-                  ({destination.regionalName})
-                </span>
-              )}
-            </div>
-
-            <p className="font-serif text-lg sm:text-xl text-sand-200/95 italic max-w-2xl">
-              "{destination.headline}"
-            </p>
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div className="flex flex-wrap items-center gap-6 pt-3 text-xs text-sand-200 font-medium">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-terracotta-400" />
-              <span>{destination.state} • {destination.region}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-forest-400 animate-pulse" />
-              <span>Crowd Level: <strong className="text-sand-50">{destination.crowdLevel}</strong></span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-gold-400 fill-gold-400" />
-              <span>{destination.rating} ({destination.reviewCount} reviews)</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-gold-400" />
-              <span>{displayBuddies.length} Verified Buddies available</span>
-            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20">
+              <Clock className="w-3.5 h-3.5 text-[#DFB86C]" /> {place.recommendedDuration}
+            </span>
+            {place.latitude !== null && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20">
+                <MapPin className="w-3.5 h-3.5 text-[#B86B4B]" /> {place.latitude.toFixed(4)}° N, {place.longitude?.toFixed(4)}° E
+              </span>
+            )}
           </div>
         </div>
       </section>
 
-      {/* 2. Main Body Grid */}
+      {/* 2. History body */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Column (Content & Local Secrets) */}
-          <div className="lg:col-span-8 space-y-12">
-            {/* Overview & Why Visit */}
-            <div className="space-y-6">
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-forest-950">
-                Why Visit This Lesser-Known Place?
+          <div className="lg:col-span-8 space-y-10">
+            {/* History */}
+            <section className="space-y-3">
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-forest-950 flex items-center gap-2">
+                <Landmark className="w-5 h-5 text-[#B86B4B]" /> History
               </h2>
-              <p className="text-base sm:text-lg text-charcoal-800 leading-relaxed font-serif">
-                {destination.description}
-              </p>
-              <div className="p-5 rounded-2xl bg-sand-100 border border-sand-300 space-y-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-terracotta-600 block">
-                  Cultural Significance & Value
-                </span>
-                <p className="text-sm text-charcoal-800 leading-relaxed">
-                  {destination.whyVisit}
+              <p className="text-base text-charcoal-800 leading-relaxed">{place.historicalSummary}</p>
+            </section>
+
+            {/* Why it matters */}
+            <section className="p-6 rounded-2xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-2">
+              <h2 className="font-serif text-xl font-bold text-forest-950 flex items-center gap-2">
+                <Star className="w-4.5 h-4.5 text-[#B86B4B]" /> Why it matters
+              </h2>
+              <p className="text-sm text-charcoal-800 leading-relaxed">{place.whyItMatters}</p>
+            </section>
+
+            {/* Tourist explanation + What to notice */}
+            <section className="space-y-4">
+              <h2 className="font-serif text-2xl font-bold text-forest-950 flex items-center gap-2">
+                <Compass className="w-5 h-5 text-forest-800" /> What to notice
+              </h2>
+              <p className="text-sm text-charcoal-700 leading-relaxed">{place.touristExplanation}</p>
+              {place.whatToNotice.length > 0 && (
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {place.whatToNotice.map((n, i) => (
+                    <li key={i} className="flex items-start gap-2 p-3 rounded-xl bg-white border border-[#E8DFCF] text-xs text-charcoal-800">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#B86B4B] mt-1.5 shrink-0" />
+                      {n}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            {/* Guide line */}
+            {place.guideLine && (
+              <section className="p-6 rounded-2xl bg-forest-900 text-[#F5F1E8] space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#DFB86C]">Guide line</span>
+                <p className="font-serif text-lg italic leading-relaxed">&ldquo;{place.guideLine}&rdquo;</p>
+              </section>
+            )}
+
+            {/* Verification notice for unverified places */}
+            {place.contentStatus === 'requires_verification' && (
+              <section className="p-5 rounded-2xl border-l-4 border-terracotta-500 bg-terracotta-50 space-y-2">
+                <p className="text-sm font-bold text-terracotta-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" /> Verification pending
                 </p>
-              </div>
-            </div>
-
-            {/* Local Story & Living Tradition */}
-            <div className="space-y-4 border-t border-sand-300 pt-8">
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-forest-950 flex items-center gap-2">
-                <Compass className="w-5 h-5 text-forest-800" />
-                <span>The Indigenous Story & Heritage</span>
-              </h3>
-              <p className="text-sm sm:text-base text-charcoal-800 leading-relaxed">
-                {destination.localStory}
-              </p>
-              <div className="p-4 rounded-xl bg-forest-50 border border-forest-200 text-xs text-forest-950 space-y-1">
-                <strong>Living Heritage Note:</strong> {destination.culturalSignificance}
-              </div>
-            </div>
-
-            {/* Local Tips Contributed by Verified Buddies */}
-            <div className="space-y-5 border-t border-sand-300 pt-8">
-              <div className="flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-gold-600" />
-                <h3 className="font-serif text-xl sm:text-2xl font-bold text-forest-950">
-                  Local Secrets from Verified Contributors
-                </h3>
-              </div>
-              <p className="text-xs text-charcoal-700">
-                Unpublished insights passed down by lifelong residents.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {destination.localSecrets.map((secret, idx) => (
-                  <div
-                    key={idx}
-                    className="p-5 rounded-xl bg-sand-100/90 border border-sand-300 space-y-3"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-serif font-bold text-sm text-forest-950">
-                        {secret.title}
-                      </span>
-                      <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-forest-800 text-gold-300">
-                        {secret.contributorBadge}
-                      </span>
-                    </div>
-                    <p className="text-xs text-charcoal-800 italic leading-relaxed">
-                      "{secret.tip}"
-                    </p>
-                    <p className="text-[11px] text-charcoal-600 font-medium">
-                      Contributed by {secret.contributorName}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Access & How to Reach */}
-            <div className="space-y-4 border-t border-sand-300 pt-8">
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-forest-950">
-                How to Reach & Access Route
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                <div className="p-4 rounded-xl bg-sand-100 border border-sand-300 space-y-1.5">
-                  <div className="flex items-center gap-2 text-forest-900 font-bold">
-                    <Plane className="w-4 h-4 text-terracotta-600" />
-                    <span>Nearest Airport</span>
-                  </div>
-                  <p className="text-charcoal-800">{destination.howToReach.nearestAirport}</p>
-                </div>
-                <div className="p-4 rounded-xl bg-sand-100 border border-sand-300 space-y-1.5">
-                  <div className="flex items-center gap-2 text-forest-900 font-bold">
-                    <Train className="w-4 h-4 text-forest-700" />
-                    <span>Nearest Railhead</span>
-                  </div>
-                  <p className="text-charcoal-800">{destination.howToReach.nearestRailhead}</p>
-                </div>
-                <div className="p-4 rounded-xl bg-sand-100 border border-sand-300 space-y-1.5">
-                  <div className="flex items-center gap-2 text-forest-900 font-bold">
-                    <Car className="w-4 h-4 text-gold-600" />
-                    <span>Road Access</span>
-                  </div>
-                  <p className="text-charcoal-800">{destination.howToReach.roadAccess}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Safety & Cultural Respect Protocol */}
-            <div className="p-6 rounded-2xl bg-sand-100 border-l-4 border-terracotta-500 space-y-3">
-              <div className="flex items-center gap-2 text-forest-950 font-bold text-sm">
-                <AlertCircle className="w-4 h-4 text-terracotta-600" />
-                <span>Safety Protocols & Cultural Respect</span>
-              </div>
-              <ul className="space-y-2 text-xs text-charcoal-800">
-                {destination.safetyGuidelines.map((guideline, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-terracotta-500 mt-1.5 shrink-0" />
-                    <span>{guideline}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-[11px] text-charcoal-600 italic pt-2 border-t border-sand-300">
-                Notice: Terrain guides assist with wilderness orientation, but unexpected natural events can occur. Emergency services in interior valleys are community-coordinated.
-              </p>
-            </div>
+                <p className="text-xs text-charcoal-700">{place.verificationNote}</p>
+              </section>
+            )}
           </div>
 
-          {/* Right Column: Sticky Booking & Buddy Card Area */}
+          {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
-            {/* Quick Actions Card */}
-            <div className="p-6 rounded-2xl bg-forest-900 text-sand-50 border border-gold-500/40 shadow-xl space-y-5 sticky top-24">
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-gold-400">
-                  Conscious Exploration
-                </span>
-                <h3 className="font-serif text-2xl font-bold text-sand-50">
-                  Explore with a Local
-                </h3>
-                <p className="text-xs text-sand-200">
-                  Experience {destination.name} safely and respectfully with verified residents.
-                </p>
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <a
-                  href="#available-experiences"
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-forest-950 font-bold text-sm shadow-md transition-colors"
-                >
-                  <span>View Curated Experiences</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-                <a
-                  href="#available-buddies"
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-sand-50/10 hover:bg-sand-50/20 border border-sand-200/20 text-sand-50 font-semibold text-xs transition-colors"
-                >
-                  <Users className="w-4 h-4 text-gold-400" />
-                  <span>Connect with Local Buddies</span>
-                </a>
-              </div>
-
-              {/* Best Season */}
-              <div className="pt-4 border-t border-forest-800 text-xs space-y-1">
-                <span className="text-gold-300 font-bold uppercase tracking-wider text-[10px] block">
-                  Optimal Season to Visit
-                </span>
-                <p className="text-sand-200">{destination.bestTimeToVisit}</p>
-              </div>
-
-              {/* Map & Coordinates Placeholder */}
-              <div className="p-4 rounded-xl bg-forest-950/80 border border-forest-800 space-y-2 text-xs">
-                <div className="flex items-center justify-between text-sand-300">
-                  <span className="font-bold uppercase tracking-wider text-[10px]">Geographic Pin</span>
-                  <span>{destination.coordinates.lat}° N, {destination.coordinates.lng}° E</span>
+            {/* Practical info */}
+            <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-4">
+              <h3 className="font-serif text-lg font-bold text-forest-950">Plan your visit</h3>
+              <div className="space-y-3 text-xs">
+                <div>
+                  <p className="font-bold text-forest-950 uppercase tracking-wider text-[10px]">Best time</p>
+                  <p className="text-charcoal-800 mt-0.5">{place.bestTime}</p>
                 </div>
-                <div className="h-28 rounded-lg bg-forest-900/60 border border-forest-800 flex flex-col items-center justify-center text-center p-3 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-topo-pattern opacity-30" />
-                  <MapPin className="w-6 h-6 text-terracotta-400 mb-1 z-10" />
-                  <span className="text-[11px] font-semibold text-sand-100 z-10">
-                    Offline Topo Route Ready
-                  </span>
-                  <span className="text-[9px] text-sand-400 z-10">
-                    Available in Trip Mode once booked
-                  </span>
+                <div>
+                  <p className="font-bold text-forest-950 uppercase tracking-wider text-[10px]">Timings</p>
+                  <p className="text-charcoal-800 mt-0.5">{place.timings ?? 'Check official source for latest information'}</p>
+                </div>
+                <div>
+                  <p className="font-bold text-forest-950 uppercase tracking-wider text-[10px]">Entry</p>
+                  <p className="text-charcoal-800 mt-0.5">{place.entryInfo ?? 'Check official source for latest information'}</p>
+                </div>
+                <div>
+                  <p className="font-bold text-forest-950 uppercase tracking-wider text-[10px]">Tourism pressure</p>
+                  <p className="text-charcoal-800 mt-0.5">{place.tourismPressure}</p>
+                  <p className="text-[10px] text-charcoal-600 mt-0.5">{place.tourismPressureMethodology}</p>
                 </div>
               </div>
+
+              {place.officialSource && (
+                <a
+                  href={place.officialSource}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-terracotta-600 hover:underline"
+                >
+                  Official source <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
             </div>
+
+            {/* Map mini-CTA */}
+            {place.latitude !== null && (
+              <div className="p-6 rounded-2xl bg-forest-900 text-[#F5F1E8] space-y-3">
+                <h3 className="font-serif text-lg font-bold">See it on the map</h3>
+                <p className="text-xs text-[#E8DFCF]/80">
+                  Explore all 24 places and filter by the six heritage themes.
+                </p>
+                <Link
+                  href="/explore"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A] text-xs font-bold transition-colors"
+                >
+                  Open interactive map <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* 3. Nearby Curated Experiences Section */}
-      <section id="available-experiences" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pt-8 border-t border-sand-300">
+      {/* 3. Experiences here */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="space-y-1">
-          <span className="text-xs uppercase tracking-wider font-bold text-terracotta-600">
-            Bookable Journeys
-          </span>
-          <h2 className="font-serif text-3xl font-bold text-forest-950">
-            Experiences at {destination.name}
-          </h2>
-          <p className="text-xs text-charcoal-700">
-            Small-group immersions hosted directly by native contributors.
-          </p>
+          <span className="text-xs font-bold uppercase tracking-wider text-terracotta-600">Bookable journeys</span>
+          <h2 className="font-serif text-3xl font-bold text-forest-950">Yatra Mitra experiences at {place.name}</h2>
+          <p className="text-xs text-charcoal-700">Small-group experiences hosted by local Mitras, with Fair Price ranges.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayExperiences.map((exp) => (
-            <ExperienceCard key={exp.id} experience={exp} />
-          ))}
-        </div>
+        {placeExperiences.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {placeExperiences.map((exp) => (
+              <ExperienceCard key={exp.id} experience={exp} />
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 rounded-2xl bg-white border border-[#E8DFCF] text-center space-y-2">
+            <p className="font-serif text-lg font-bold text-[#0D211A]">No curated experiences here yet.</p>
+            <p className="text-xs text-[#1D2521]/70">
+              This place is on the map for discovery. Check back as the pilot adds experiences, or browse
+              experiences elsewhere.
+            </p>
+            <Link href="/explore" className="inline-block text-sm font-bold text-terracotta-600 hover:underline">
+              Explore other places →
+            </Link>
+          </div>
+        )}
       </section>
 
-      {/* 4. Available Local Buddies Section */}
-      <section id="available-buddies" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pt-8 border-t border-sand-300">
-        <div className="space-y-1">
-          <span className="text-xs uppercase tracking-wider font-bold text-terracotta-600">
-            Verified Hosts
-          </span>
-          <h2 className="font-serif text-3xl font-bold text-forest-950">
-            Meet the Local Buddies of {destination.name}
-          </h2>
-          <p className="text-xs text-charcoal-700">
-            Vetted residents with deep cultural roots and field safety training.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayBuddies.map((buddy) => (
-            <BuddyCard key={buddy.id} buddy={buddy} />
-          ))}
-        </div>
-      </section>
+      {/* 4. Mitras */}
+      {mitras.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-terracotta-600">Verified hosts</span>
+            <h2 className="font-serif text-3xl font-bold text-forest-950">Mitras who guide here</h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {mitras.map((m) => (
+              <Link
+                key={m!.id}
+                href={`/mitras/${m!.id}`}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white border border-[#E8DFCF] hover:border-[#B8955A] transition-colors"
+              >
+                <ShieldCheck className="w-4 h-4 text-forest-700" />
+                <span className="text-sm font-semibold text-forest-950">{m!.name}</span>
+                <span className="text-xs text-[#1D2521]/60">Trust {m!.trustScore}/100</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

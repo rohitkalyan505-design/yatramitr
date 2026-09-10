@@ -21,27 +21,110 @@ import {
   AlertCircle
 } from 'lucide-react';
 import HeroSection from '@/components/hero/HeroSection';
-import { ARAKU_HIDDEN_GEMS, MOCK_BUDDIES, MOCK_EXPERIENCES, MOCK_TRAVEL_MATCHES } from '@/data/mock-data';
-import { HiddenGem } from '@/types';
+import { EXPERIENCES, MITRAS, DEMO_TRAVELLERS } from '@/data/experiences';
+import { PLACES } from '@/data/places';
+import type { HiddenGem, TravelMatch } from '@/types';
+
+// Homepage hidden-gem shortlist — derived from the real dataset
+const HIDDEN_GEMS: HiddenGem[] = [
+  {
+    id: 'quiet-heritage-lanes',
+    name: 'Quiet Heritage Lanes of the Old City',
+    location: 'Old City, Hyderabad',
+    shortDescription: 'Residential lanes, old courtyards and living workshops away from the busiest circuit.',
+    experienceType: 'Heritage Walk',
+    estimatedPrice: 600,
+    image: 'https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1200&q=80',
+    whyMatchesYou: [
+      'Quieter than the Charminar main circuit.',
+      'Great for architecture lovers.',
+      'Local stories from a lifelong resident.',
+      'Small groups of max 3 travellers.'
+    ],
+    recommendedBuddyId: 'mitra-ayesha',
+    experienceId: 'quiet-heritage-lanes'
+  },
+  {
+    id: 'old-city-food-walk',
+    name: 'Old City Food Trail',
+    location: 'Old City, Hyderabad',
+    shortDescription: 'A guided tasting trail through the old city\u2019s legendary food lanes.',
+    experienceType: 'Food & Culture',
+    estimatedPrice: 700,
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=80',
+    whyMatchesYou: [
+      'Discover Hyderabad\u2019s Deccani food traditions.',
+      '5–6 guided tasting stops, food costs included.',
+      'Learn the stories behind each dish.',
+      'Hygiene-checked vendor selection.'
+    ],
+    recommendedBuddyId: 'mitra-arjun',
+    experienceId: 'old-city-food-walk'
+  },
+  {
+    id: 'crafts-makers-afternoon',
+    name: 'Crafts & Makers Afternoon',
+    location: 'Shilparamam, HITEC City',
+    shortDescription: 'Meet Telangana\u2019s working artisans and buy direct from makers.',
+    experienceType: 'Arts & Crafts',
+    estimatedPrice: 550,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Shilparamam_Hitech_City.jpg/1280px-Shilparamam_Hitech_City.jpg',
+    whyMatchesYou: [
+      'Meet 3–4 working artisan families.',
+      'Watch crafts being made, not just sold.',
+      'Fair-trade buying guidance.',
+      'Supports lower-pressure craft neighbourhoods.'
+    ],
+    recommendedBuddyId: 'mitra-meera',
+    experienceId: 'crafts-makers-afternoon'
+  },
+  {
+    id: 'golconda-fort-deep-walk',
+    name: 'Golconda Fort Deep Walk',
+    location: 'Golconda, Hyderabad',
+    shortDescription: 'Acoustics, water systems, royal apartments and the hilltop Bala Hisar.',
+    experienceType: 'History & Architecture',
+    estimatedPrice: 750,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Golconda_Fort_%28June_2017%29.jpg/1280px-Golconda_Fort_%28June_2017%29.jpg',
+    whyMatchesYou: [
+      'Qutb Shahi capital history in depth.',
+      'The famous acoustic demonstration.',
+      'Stories beyond the standard tourist route.',
+      'Ends at the best viewpoint in Hyderabad.'
+    ],
+    recommendedBuddyId: 'mitra-rahul',
+    experienceId: 'golconda-fort-deep-walk'
+  }
+];
+
+const TRAVEL_MATCHES: TravelMatch[] = DEMO_TRAVELLERS.map((t) => ({
+  id: t.id,
+  name: t.displayName,
+  city: t.city,
+  tags: t.sharedInterests,
+  matchPercentage: t.matchScore,
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+  travelStyle: `${t.travelStyle} pace · ${t.languages.join(', ')}`,
+  upcomingDestination: 'Hyderabad'
+}));
 
 
 export default function HomePage() {
-  const [selectedGem, setSelectedGem] = useState<HiddenGem>(ARAKU_HIDDEN_GEMS[0]);
-  const [selectedMatch, setSelectedMatch] = useState(MOCK_TRAVEL_MATCHES[0]);
+  const [selectedGem, setSelectedGem] = useState<HiddenGem>(HIDDEN_GEMS[0]);
+  const [selectedMatch, setSelectedMatch] = useState(TRAVEL_MATCHES[0]);
 
   // Featured experiences for Hyderabad
+  const featuredExperiences = [
+    EXPERIENCES.find(e => e.id === 'old-city-heritage-walk') ?? EXPERIENCES[0],
+    EXPERIENCES.find(e => e.id === 'golconda-fort-deep-walk') ?? EXPERIENCES[1],
+    EXPERIENCES.find(e => e.id === 'crafts-makers-afternoon') ?? EXPERIENCES[2],
+  ];
 
-const featuredExperiences = [
-  MOCK_EXPERIENCES.find(e => e.id === 'hyderabad-old-city') || MOCK_EXPERIENCES[0],
-  MOCK_EXPERIENCES.find(e => e.id === 'hyderabad-food-walk') || MOCK_EXPERIENCES[1],
-  MOCK_EXPERIENCES.find(e => e.id === 'hyderabad-heritage-lanes') || MOCK_EXPERIENCES[2],
-];
-
-  // 3 Featured Local Mitras
+  // 3 Featured Local Mitras (demo profiles)
   const featuredBuddies = [
-    MOCK_BUDDIES.find(b => b.id === 'sai-kumar') || MOCK_BUDDIES[0],
-    MOCK_BUDDIES.find(b => b.id === 'ayesha-khan') || MOCK_BUDDIES[1],
-    MOCK_BUDDIES.find(b => b.id === 'rahul-naik') || MOCK_BUDDIES[2],
+    MITRAS.find(b => b.id === 'mitra-arjun') ?? MITRAS[0],
+    MITRAS.find(b => b.id === 'mitra-ayesha') ?? MITRAS[1],
+    MITRAS.find(b => b.id === 'mitra-rahul') ?? MITRAS[2],
   ];
 
   return (
@@ -73,7 +156,7 @@ const featuredExperiences = [
               Hidden Places
             </h3>
             <p className="text-sm text-[#1D2521]/75 leading-relaxed">
-              Quiet forest trails, unmapped freshwater springs, and heritage groves documented responsibly to prevent ecological strain and overtourism.
+              Quieter heritage lanes, working artisan studios, and living food traditions — curated with local Mitras so your spending reaches more neighbourhoods.
             </p>
           </div>
 
@@ -85,7 +168,7 @@ const featuredExperiences = [
               Verified Local Mitras
             </h3>
             <p className="text-sm text-[#1D2521]/75 leading-relaxed">
-              Lifelong residents who have undergone physical identity verification, native geography examinations, and wilderness ethics orientations.
+              Lifelong residents progressing through a transparent five-step verification workflow — identity, residency, knowledge, safety and community references, all visible on their Trust Passport.
             </p>
           </div>
 
@@ -97,7 +180,7 @@ const featuredExperiences = [
               Authentic Experiences
             </h3>
             <p className="text-sm text-[#1D2521]/75 leading-relaxed">
-              Host-crafted small-group immersions capped at 4–5 travellers. Direct resident earnings and 5% contribution to regional community funds.
+              Host-crafted small-group immersions capped at 3–5 travellers, with Fair Price ranges and a proposed 95% Mitra / 5% community contribution model.
             </p>
           </div>
         </div>
@@ -119,7 +202,7 @@ const featuredExperiences = [
               </p>
             </div>
             <Link
-              href="/place/hyderabad"
+              href="/explore"
               className="inline-flex items-center gap-2 text-sm font-semibold text-[#16352A] hover:text-[#B86B4B] transition-colors"
             >
               <span>Explore full Hyderabad guide</span>
@@ -129,7 +212,7 @@ const featuredExperiences = [
 
           {/* 4 Destination Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {ARAKU_HIDDEN_GEMS.map((gem) => {
+            {HIDDEN_GEMS.map((gem) => {
               const isSelected = selectedGem.id === gem.id;
               return (
                 <div
@@ -198,14 +281,14 @@ const featuredExperiences = [
 
               <div className="flex items-center gap-3">
                 <Link
-                  href={`/experience/${selectedGem.experienceId}`}
+                  href={`/experiences/${selectedGem.experienceId}`}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-semibold transition-colors"
                 >
                   <span>Book with Local Mitra</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/place/hyderabad"
+                  href="/explore"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-[#16352A]/30 text-[#0D211A] text-sm font-medium hover:bg-[#F5F1E8] transition-colors"
                 >
                   <span>Place Details</span>
@@ -240,7 +323,7 @@ const featuredExperiences = [
             Don't just visit. Meet someone who knows.
           </h2>
           <p className="text-sm sm:text-base text-[#1D2521]/80">
-            Every Local Mitra is a native resident carrying lifelong knowledge of local terrain, seasonal flora, and cultural traditions.
+            Every Mitra carries a transparent Trust Passport — see exactly which verification steps are complete, pending, or not started. No hidden claims, no fake badges.
           </p>
         </div>
 
@@ -276,7 +359,7 @@ const featuredExperiences = [
                         ))}
                       </div>
                       <span className="text-xs font-bold text-[#0D211A]">
-                        {buddy.rating.toFixed(1)}
+                        Trust {buddy.trustScore}/100
                       </span>
                     </div>
                   </div>
@@ -298,7 +381,7 @@ const featuredExperiences = [
                     Specialities
                   </span>
                   <div className="flex flex-wrap gap-1.5">
-                    {buddy.specialties.map((spec, i) => (
+                    {buddy.specialities.map((spec: string, i: number) => (
                       <span
                         key={i}
                         className="px-2.5 py-1 rounded-md bg-[#F5F1E8] text-[#16352A] text-xs font-medium border border-[#E8DFCF]"
@@ -340,10 +423,9 @@ const featuredExperiences = [
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0D211A]">
               Travel like a local.
-            </h2>
-            <p className="text-sm sm:text-base text-[#1D2521]/80">
-              Thoughtfully paced small-group immersions guided by verified residents. Transparent pricing with community contributions built in.
-            </p>
+            </h2>              <p className="text-sm sm:text-base text-[#1D2521]/80">
+                Small-group experiences guided by local Mitras. Transparent Fair Price ranges with the proposed community contribution built in.
+              </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -363,7 +445,7 @@ const featuredExperiences = [
                     />
                     <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-[#0D211A]/85 backdrop-blur-sm text-xs font-semibold text-[#F5F1E8] flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-[#B8955A]" />
-                      <span>{exp.duration}</span>
+                      <span>{exp.durationLabel}</span>
                     </div>
                   </div>
 
@@ -389,7 +471,7 @@ const featuredExperiences = [
 
                 <div className="p-6 pt-0">
                   <Link
-                    href={exp.id === 'katiki' ? '/experience/katiki' : `/experiences/${exp.id}`}
+                    href={`/experiences/${exp.id}`}
                     className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-md border-2 border-[#16352A] text-[#16352A] hover:bg-[#16352A] hover:text-[#F5F1E8] text-sm font-bold transition-colors"
                   >
                     <span>View Experience</span>
@@ -420,15 +502,15 @@ const featuredExperiences = [
             <ul className="space-y-2.5 text-sm text-[#1D2521]/85">
               <li className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#B86B4B]" />
-                <span><strong>Interests:</strong> Indigenous agriculture, wildlife, tribal folklore, or photography.</span>
+                <span><strong>Interests:</strong> heritage, food, crafts, architecture, photography or local stories.</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#B86B4B]" />
-                <span><strong>Travel style:</strong> Slow walking, silent contemplation, or rustic homestays.</span>
+                <span><strong>Travel style:</strong> slow wandering, balanced exploring, or fast discovery.</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#B86B4B]" />
-                <span><strong>Budget & pace:</strong> Mutual alignment without awkward financial mismatch.</span>
+                <span><strong>Budget & pace:</strong> mutual alignment without awkward financial mismatch.</span>
               </li>
             </ul>
 
@@ -451,10 +533,10 @@ const featuredExperiences = [
                   <span className="text-xs text-[#B86B4B] uppercase tracking-wider font-semibold block">
                     Your travel match
                   </span>
-                  <span className="text-xs text-[#1D2521]/60">Matched for Hyderabad</span>
+                  <span className="text-xs text-[#1D2521]/60">Demo pool · matched for Hyderabad</span>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-[#16352A]/10 text-[#16352A] font-bold text-xs">
-                  {selectedMatch.matchPercentage}% match
+                  {selectedMatch.matchPercentage}% match · demo
                 </span>
               </div>
 
@@ -494,7 +576,7 @@ const featuredExperiences = [
               <div className="pt-4 border-t border-[#E8DFCF] flex items-center justify-between text-xs text-[#1D2521]/60">
                 <span>View other matches:</span>
                 <div className="flex gap-2">
-                  {MOCK_TRAVEL_MATCHES.map((m) => (
+                  {TRAVEL_MATCHES.map((m) => (
                     <button
                       key={m.id}
                       onClick={() => setSelectedMatch(m)}
@@ -524,8 +606,8 @@ const featuredExperiences = [
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0D211A]">
               Built around trust.
             </h2>
-            <p className="text-sm sm:text-base text-[#1D2521]/80">
-              We replace opaque intermediary travel agents with transparent local verification and direct community accountability.
+            <p className="text-sm sm:text-base text-[#1D2521]/80 leading-relaxed">
+              We replace opaque intermediaries with transparent verification, fair price guidance and direct community accountability.
             </p>
           </div>
 
@@ -550,7 +632,7 @@ const featuredExperiences = [
                 Knowledge & Experience
               </h3>
               <p className="text-xs text-[#1D2521]/75 leading-relaxed">
-                Oral geography test and wilderness safety assessment passed before any public experience is listed.
+                Oral geography test and safety assessment steps in the Mitra verification workflow, completed before any experience goes live.
               </p>
             </div>
 
@@ -562,7 +644,7 @@ const featuredExperiences = [
                 Transparent Pricing
               </h3>
               <p className="text-xs text-[#1D2521]/75 leading-relaxed">
-                Zero hidden commercial commissions. 95% goes to the Mitra; 5% directly funds local ecological trusts.
+                Zero hidden commercial commissions. Under the proposed model, 95% goes to the Mitra; 5% supports local community initiatives.
               </p>
             </div>
 
@@ -574,7 +656,7 @@ const featuredExperiences = [
                 Report & Safety Tools
               </h3>
               <p className="text-xs text-[#1D2521]/75 leading-relaxed">
-                Live Trip Mode checkpoints, local forest ranger contacts, and direct incident escalation tools.
+                Live Trip Mode checkpoints, verified emergency numbers (112 / 108), and direct incident escalation tools.
               </p>
             </div>
 
@@ -586,7 +668,7 @@ const featuredExperiences = [
                 Community Reputation
               </h3>
               <p className="text-xs text-[#1D2521]/75 leading-relaxed">
-                Verified reviews from conscious travellers with genuine village impact tracking.
+                Verified reviews linked to completed bookings only — every review carries a ✓ Verified Yatra badge. No fabricated social proof.
               </p>
             </div>
           </div>
@@ -602,8 +684,8 @@ const featuredExperiences = [
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0D211A]">
             How It Works
           </h2>
-          <p className="text-sm sm:text-base text-[#1D2521]/80">
-            Four simple steps to experience India beyond the standard tourist trail.
+          <p className="text-sm text-[#1D2521]/80">
+            Four simple steps to experience Hyderabad beyond the standard tourist trail.
           </p>
         </div>
 
@@ -619,7 +701,7 @@ const featuredExperiences = [
               Tell us what you want
             </h3>
             <p className="text-xs sm:text-sm text-[#1D2521]/75 leading-relaxed">
-              Select your crowd tolerance, regional interest, and travel rhythm.
+              Select your interests, budget, crowd preference and travel rhythm — get matched in seconds.
             </p>
           </div>
 
@@ -633,7 +715,7 @@ const featuredExperiences = [
               Discover hidden places
             </h3>
             <p className="text-xs sm:text-sm text-[#1D2521]/75 leading-relaxed">
-              Explore curated, low-density ecosystems with uncommercialized local trails.
+              Explore 24 real places across six heritage themes, filtered your way.
             </p>
           </div>
 
@@ -647,7 +729,7 @@ const featuredExperiences = [
               Meet a verified local
             </h3>
             <p className="text-xs sm:text-sm text-[#1D2521]/75 leading-relaxed">
-              Connect directly with vetted native guardians for intimate micro-group journeys.
+              Connect directly with local Mitras for small-group journeys with transparent trust information.
             </p>
           </div>
 
@@ -661,7 +743,7 @@ const featuredExperiences = [
               Experience India differently
             </h3>
             <p className="text-xs sm:text-sm text-[#1D2521]/75 leading-relaxed">
-              Travel peacefully with live trail checkpoints and direct resident benefits.
+              Travel with Live Trip checkpoints, fair price guidance and visible community impact.
             </p>
           </div>
         </div>
@@ -689,7 +771,7 @@ const featuredExperiences = [
               Your hometown is someone's next adventure.
             </h2>
             <p className="text-base sm:text-lg text-[#E8DFCF] leading-relaxed">
-              Share your local knowledge, create authentic experiences and earn from tourism in your community.
+              Share your local knowledge, create authentic experiences and earn from tourism in your neighbourhood.
             </p>
 
             <div className="pt-2">

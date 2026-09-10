@@ -56,7 +56,7 @@ export default function HeroSection() {
           {/* Dual Action CTAs */}
           <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             <Link
-              href="/place/hyderabad"
+              href="/explore"
               className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-md bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A] font-bold text-base shadow-md transition-all transform hover:-translate-y-0.5"
             >
               <span>Explore Hyderabad</span>
@@ -64,10 +64,10 @@ export default function HeroSection() {
             </Link>
 
             <Link
-              href="/become-mitra"
+              href="/find-my-yatra"
               className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/20 text-[#FFFFFF] font-medium text-base backdrop-blur-sm transition-colors"
             >
-              <span>Become a Local Mitra</span>
+              <span>Find My Yatra</span>
             </Link>
           </div>
 

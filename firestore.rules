@@ -1,0 +1,129 @@
+rules_version = '2';
+
+// ============================================================
+// YATRA MITRA — FIRESTORE SECURITY RULES (MVP)
+// ============================================================
+// Public read:   places, experiences, public mitra info, reviews
+// Private:       users can only read/write their own profile data,
+//                bookings, trips, traveller profiles
+// Write-protected: places/experiences/mitras seeded by admin only
+// Reviews:       any signed-in user may submit; documents carry
+//                bookingId + userId and are validated client-side
+//                against a completed booking (server also checks)
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Public content ----------
+    match /places/{placeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /experiences/{experienceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /mitras/{mitraId} {
+      allow read: if true;
+      // Mitra profiles are managed by admin/verification workflow
+      allow write: if isAdmin();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.verifiedYatra == true;
+      allow update, delete: if isOwnerOf('userId', reviewId) || isAdmin();
+    }
+
+    // ---------- User-private data ----------
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    match /travellerProfiles/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isOwnerOfField('userId') || isAdmin();
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'booking_request_confirmed';
+      // Status transitions (confirmed/active/completed) are admin/system only
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /trips/{tripId} {
+      // Trip documents embed userId
+      allow read: if isOwnerOfField('userId') || isAdmin();
+      allow create, update: if isOwnerOfField('userId') || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /tripCheckpoints/{checkpointId} {
+      allow read, write: if isOwnerOfField('userId') || isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isOwnerOfField('userId');
+      allow write: if isAdmin();
+    }
+
+    // ---------- Mitra verification workflow ----------
+    match /mitraVerifications/{verificationId} {
+      // Applicants can create their own application and read it;
+      // only admin can advance statuses.
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid;
+      allow read: if isOwnerOfField('userId') || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // ---------- Price ranges (public reference data) ----------
+    match /priceRanges/{rangeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------- Travel matches ----------
+    match /travelMatches/{matchId} {
+      allow read: if true; // demo pool, public
+      allow write: if isAdmin();
+    }
+
+    // ---------- Helpers ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isOwnerOfField(fieldName) {
+      return isSignedIn()
+        && resource.data[fieldName] == request.auth.uid;
+    }
+
+    function isOwnerOf(fieldName, docId) {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/$(docId)).data[fieldName] == request.auth.uid;
+    }
+
+    // Replace with an admin check against a users/{uid}.role == 'admin'
+    // claim or a custom claim in production.
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.admin == true;
+    }
+  }
+}

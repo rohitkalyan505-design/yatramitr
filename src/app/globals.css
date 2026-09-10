@@ -64,3 +64,67 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(223, 184, 108, 0.2);
 }
+
+/* ============================================================
+   MAPBOX MARKERS — Yatra Mitra custom pin style
+   ============================================================ */
+.ym-marker {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--marker-color, #2d7a4f);
+  border: 3px solid #faf8f5;
+  box-shadow: 0 2px 8px rgba(13, 33, 26, 0.45);
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  padding: 0;
+}
+
+.ym-marker:hover {
+  transform: scale(1.25);
+  box-shadow: 0 4px 14px rgba(13, 33, 26, 0.55);
+}
+
+.ym-marker:focus-visible {
+  outline: 2px solid #dfb86c;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   SUBTLE ENTRANCE ANIMATION — used by modals / confirmations
+   ============================================================ */
+@keyframes ym-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: ym-fade-up 300ms ease-out both;
+}
+
+.fade-in {
+  animation: ym-fade-up 300ms ease-out both;
+}
+
+.zoom-in-95 {
+  animation-name: ym-fade-up;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .fade-in,
+  .zoom-in-95 {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

@@ -2,14 +2,19 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import AskMitraWidget from "@/components/askmitra/AskMitraWidget";
+import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
-  title: "Yatra Mitra | Discover the Hidden Side of India",
-  description: "Discover Hyderabad beyond the usual. Meet verified Local Mitras, discover hidden places, and experience authentic local stories.",
-  keywords: "Hyderabad tourism, hidden Hyderabad, local Mitras, offbeat travel, authentic experiences, Smart India Hackathon",
+  title: "Yatra Mitra | Discover Hyderabad beyond the usual",
+  description:
+    "A responsible-tourism platform for Hyderabad: 24 real heritage places, verified-workflow Mitras, fair price guidance, live trip safety and community impact.",
+  keywords:
+    "Hyderabad tourism, responsible tourism, Telangana heritage, local Mitras, fair price, Smart India Hackathon",
   openGraph: {
-    title: "Yatra Mitra | Discover the Hidden Side of India",
-    description: "Go beyond crowded attractions. Discover lesser-known places and verified Local Buddies.",
+    title: "Yatra Mitra | Discover Hyderabad beyond the usual",
+    description:
+      "Meet local Mitras, discover 24 real places, and travel with fair prices and safety tools.",
     type: "website",
     locale: "en_IN",
   },
@@ -23,11 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="min-h-screen flex flex-col paper-texture text-charcoal-900 selection:bg-terracotta-500 selection:text-white">
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+          <AskMitraWidget />
+        </AuthProvider>
       </body>
     </html>
   );

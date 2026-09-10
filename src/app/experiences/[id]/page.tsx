@@ -2,299 +2,219 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { 
-  Clock, 
-  Users, 
-  ShieldCheck, 
-  MapPin, 
-  Star, 
-  CheckCircle2, 
-  AlertCircle, 
-  ArrowRight, 
-  Sparkles,
-  HeartHandshake,
-  Calendar,
-  Compass
+import {
+  Clock, Users, MapPin, ShieldCheck, CheckCircle2, AlertCircle,
+  ArrowRight, Star, Info, Languages,
 } from 'lucide-react';
-import { MOCK_EXPERIENCES, MOCK_BUDDIES } from '@/data/mock-data';
+import { getExperienceById, getMitraById, EXPERIENCES } from '@/data/experiences';
+import { getPlaceById } from '@/data/places';
+import FairPriceCard from '@/components/ui/FairPriceCard';
+import TrustPassport from '@/components/ui/TrustPassport';
+import ExperienceCard from '@/components/ui/ExperienceCard';
+import DemoBadge from '@/components/ui/DemoBadge';
 import { formatCurrency } from '@/lib/utils';
 
 export function generateStaticParams() {
-  return MOCK_EXPERIENCES.map((experience) => ({
-    id: experience.id,
-  }));
+  return EXPERIENCES.map((e) => ({ id: e.id }));
 }
 
-export default function ExperienceDetailsPage({ params }: { params: { id: string } }) {
-  const experience = MOCK_EXPERIENCES.find((e) => e.id === params.id);
+export default function ExperiencePage({ params }: { params: { id: string } }) {
+  const experience = getExperienceById(params.id);
+  if (!experience) notFound();
 
-  if (!experience) {
-    notFound();
-  }
+  const mitra = getMitraById(experience.mitraId);
+  const place = getPlaceById(experience.placeId);
 
-  const hostBuddy = MOCK_BUDDIES.find((b) => b.id === experience.hostBuddyId) || MOCK_BUDDIES[0];
+  const pressureColor =
+    experience.crowdLevel === 'Low' ? '#2D7A4F' : experience.crowdLevel === 'Medium' ? '#C5A059' : '#BD5338';
 
   return (
     <div className="space-y-12 sm:space-y-16 pb-20">
-      {/* 1. Header & Hero Image */}
-      <section className="relative w-full min-h-[50vh] sm:min-h-[60vh] flex flex-col justify-end bg-forest-950 text-sand-50 overflow-hidden">
+      {/* 1. Hero */}
+      <section className="relative w-full min-h-[50vh] sm:min-h-[58vh] flex flex-col justify-end bg-forest-950 text-[#F5F1E8] overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image
-            src={experience.image}
-            alt={experience.title}
-            fill
-            priority
-            className="object-cover opacity-60 scale-105"
-          />
+          {experience.image ? (
+            <Image src={experience.image} alt={experience.title} fill priority className="object-cover opacity-60" />
+          ) : (
+            <div className="absolute inset-0 bg-topo-pattern opacity-40" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/40 to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 w-full space-y-4">
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <Link href="/" className="text-sand-300 hover:text-sand-50">Home</Link>
-            <span className="text-sand-500">/</span>
-            <Link href={`/places/${experience.destinationId}`} className="text-sand-300 hover:text-sand-50">
-              {experience.destinationName}
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <Link href="/" className="text-[#E8DFCF] hover:text-white">Home</Link>
+            <span className="text-[#B8955A]">/</span>
+            <Link href={`/places/${experience.placeId}`} className="text-[#E8DFCF] hover:text-white">
+              {experience.placeName}
             </Link>
-            <span className="text-sand-500">/</span>
-            <span className="text-gold-400 font-semibold truncate">{experience.title}</span>
+            <span className="text-[#B8955A]">/</span>
+            <span className="text-[#DFB86C] font-semibold truncate">{experience.title}</span>
           </div>
 
-          <div className="max-w-4xl space-y-2">
-            <span className="text-xs uppercase tracking-wider font-bold text-terracotta-400">
-              {experience.category}
+          <div className="space-y-2 max-w-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#DFB86C]">{experience.category}</span>
+            <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white">{experience.title}</h1>
+            <p className="text-sm sm:text-base text-[#E8DFCF] leading-relaxed max-w-3xl">{experience.summary}</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20">
+              <Clock className="w-3.5 h-3.5 text-[#DFB86C]" /> {experience.durationLabel}
             </span>
-            <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-sand-50">
-              {experience.title}
-            </h1>
-            <p className="text-sm sm:text-base text-sand-200 leading-relaxed max-w-3xl">
-              {experience.summary}
-            </p>
-          </div>
-
-          {/* Key Metric Chips */}
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2 text-xs text-sand-200">
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-gold-400" />
-              <span>Duration: <strong className="text-sand-50">{experience.duration}</strong></span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-gold-400" />
-              <span>Group Cap: <strong className="text-sand-50">Max {experience.groupCap} travelers</strong></span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-gold-400 fill-gold-400" />
-              <span>{experience.rating} ({experience.reviewCount} reviews)</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-forest-400" />
-              <span>Community Protected Trail</span>
-            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20">
+              <Users className="w-3.5 h-3.5 text-[#DFB86C]" /> Max {experience.groupCap} travellers
+            </span>
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold"
+              style={{ backgroundColor: `${pressureColor}33`, border: `1px solid ${pressureColor}` }}
+            >
+              {experience.crowdLevel} crowd
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20">
+              <Languages className="w-3.5 h-3.5 text-[#DFB86C]" /> {experience.languages.join(', ')}
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 2. Content & Sticky Booking Grid */}
+      {/* 2. Body */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Column: Description, Itinerary, Inclusions */}
-          <div className="lg:col-span-8 space-y-12">
-            {/* Host Banner */}
-            <div className="p-5 rounded-2xl bg-sand-100 border border-sand-300 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-forest-800 shrink-0">
-                  <Image
-                    src={hostBuddy.avatar}
-                    alt={hostBuddy.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-serif text-lg font-bold text-forest-950">
-                      Hosted by {hostBuddy.name}
-                    </h3>
-                    <ShieldCheck className="w-4 h-4 text-forest-700" />
+          {/* Left */}
+          <div className="lg:col-span-8 space-y-10">
+            {/* Mitra banner */}
+            {mitra && (
+              <div className="p-5 rounded-2xl bg-[#F5F1E8] border border-[#E8DFCF] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-forest-800 shrink-0">
+                    {mitra.avatar ? (
+                      <Image src={mitra.avatar} alt={mitra.name} fill className="object-cover" />
+                    ) : (
+                      <div className="absolute inset-0 bg-forest-800 flex items-center justify-center text-[#DFB86C] font-serif font-bold">
+                        {mitra.name.charAt(0)}
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-charcoal-700">
-                    Native of {hostBuddy.location} • Knowledge Score: {hostBuddy.knowledgeScore}%
-                  </p>
-                </div>
-              </div>
-              <Link
-                href={`/buddies/${hostBuddy.id}`}
-                className="px-4 py-2 rounded-lg border border-forest-900/30 text-forest-900 text-xs font-semibold hover:bg-sand-200 transition-colors shrink-0"
-              >
-                View Profile
-              </Link>
-            </div>
-
-            {/* Deep Journey Description */}
-            <div className="space-y-4">
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-forest-950">
-                The Journey & Cultural Context
-              </h2>
-              <p className="text-base text-charcoal-800 leading-relaxed font-serif">
-                {experience.description}
-              </p>
-              <div className="p-4 rounded-xl bg-forest-50 border border-forest-200 text-xs text-forest-950">
-                <strong>Why this is authentic:</strong> We avoid commercial jeep stops and shopping souvenir hubs. Your host guides you through community-managed ecosystems where local livelihoods are directly supported.
-              </div>
-            </div>
-
-            {/* Step-by-Step Itinerary */}
-            <div className="space-y-6 border-t border-sand-300 pt-8">
-              <h3 className="font-serif text-2xl font-bold text-forest-950 flex items-center gap-2">
-                <Compass className="w-5 h-5 text-forest-800" />
-                <span>Trail Itinerary</span>
-              </h3>
-
-              <div className="space-y-4">
-                {experience.itinerary.map((step, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 sm:p-5 rounded-xl bg-sand-100/80 border border-sand-300 space-y-1.5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-terracotta-700 uppercase tracking-wider">
-                        {step.timeSlot}
-                      </span>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-sand-200 text-charcoal-700">
-                        Step {idx + 1}
-                      </span>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-serif text-lg font-bold text-forest-950">Hosted by {mitra.name}</h3>
+                      {mitra.isDemo && <DemoBadge />}
                     </div>
-                    <h4 className="font-serif text-lg font-bold text-forest-950">
-                      {step.activity}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-charcoal-800 leading-relaxed">
-                      {step.description}
-                    </p>
+                    <p className="text-xs text-charcoal-700">{mitra.location} · Trust Score {mitra.trustScore}/100</p>
                   </div>
-                ))}
+                </div>
+                <Link
+                  href={`/mitras/${mitra.id}`}
+                  className="px-4 py-2 rounded-lg border border-forest-900/30 text-forest-900 text-xs font-semibold hover:bg-white/60 transition-colors shrink-0"
+                >
+                  View Trust Passport
+                </Link>
               </div>
-            </div>
+            )}
 
-            {/* Inclusions & Requirements */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-sand-300 pt-8">
-              <div className="p-6 rounded-2xl bg-sand-100 border border-sand-300 space-y-3">
+            {/* Description */}
+            <section className="space-y-3">
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-forest-950">The experience</h2>
+              <p className="text-base text-charcoal-800 leading-relaxed">{experience.description}</p>
+              {place && (
+                <div className="p-4 rounded-xl bg-forest-50 border border-forest-200/80 text-xs text-forest-950 space-y-1">
+                  <p className="font-bold flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5" /> About {place.name}
+                  </p>
+                  <p className="leading-relaxed">{place.touristExplanation}</p>
+                  <Link href={`/places/${place.id}`} className="inline-flex items-center gap-1 font-bold text-terracotta-600 hover:underline mt-1">
+                    Full history & why it matters <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              )}
+            </section>
+
+            {/* Inclusions */}
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 rounded-2xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-3">
                 <h4 className="font-serif text-lg font-bold text-forest-950 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-forest-700" />
-                  <span>What is Included</span>
+                  <CheckCircle2 className="w-5 h-5 text-forest-700" /> What is included
                 </h4>
                 <ul className="space-y-2 text-xs text-charcoal-800">
                   {experience.inclusions.map((inc, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-forest-700 mt-1.5 shrink-0" />
-                      <span>{inc}</span>
+                      {inc}
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <div className="p-6 rounded-2xl bg-sand-100 border border-sand-300 space-y-3">
+              <div className="p-6 rounded-2xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-3">
                 <h4 className="font-serif text-lg font-bold text-forest-950 flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-terracotta-600" />
-                  <span>What to Bring & Prepare</span>
+                  <Info className="w-5 h-5 text-terracotta-600" /> Good to know
                 </h4>
                 <ul className="space-y-2 text-xs text-charcoal-800">
-                  {experience.requirements.map((req, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-terracotta-600 mt-1.5 shrink-0" />
-                      <span>{req}</span>
-                    </li>
-                  ))}
+                  <li className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full bg-terracotta-600 mt-1.5 shrink-0" /> Meeting point: {experience.meetingPoint}</li>
+                  <li className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full bg-terracotta-600 mt-1.5 shrink-0" /> Availability status: {experience.status === 'prototype_availability' ? 'Prototype availability — dates confirmed by your Mitra after booking request' : 'Available'}</li>
+                  <li className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full bg-terracotta-600 mt-1.5 shrink-0" /> Entry tickets to monuments are not included unless stated</li>
+                  <li className="flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full bg-terracotta-600 mt-1.5 shrink-0" /> No payment is taken in this MVP — bookings are requests</li>
                 </ul>
               </div>
-            </div>
+            </section>
 
-            {/* Meeting Point Coordinates */}
-            <div className="p-6 rounded-2xl bg-sand-100 border border-sand-300 space-y-3">
-              <div className="flex items-center gap-2 text-forest-950 font-bold text-sm">
-                <MapPin className="w-4 h-4 text-terracotta-600" />
-                <span>Exact Meeting Point & Assembly</span>
-              </div>
-              <p className="font-serif font-bold text-base text-forest-950">
-                {experience.meetingPoint.title}
+            {/* Safety */}
+            <section className="p-5 rounded-2xl bg-[#F5F1E8] border-l-4 border-forest-800 space-y-2 text-xs text-charcoal-800">
+              <p className="font-bold text-forest-950 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4" /> Safety information
               </p>
-              <p className="text-xs text-charcoal-700">
-                {experience.meetingPoint.landmark}
-              </p>
-              <div className="inline-flex items-center gap-2 text-xs font-mono bg-sand-50 px-3 py-1 rounded border border-sand-300 text-forest-900">
-                GPS: {experience.meetingPoint.coordinatesText}
-              </div>
-            </div>
-
-            {/* Safety & Protocol notes */}
-            <div className="p-5 rounded-2xl bg-sand-100 border-l-4 border-forest-800 space-y-2 text-xs text-charcoal-800">
-              <p className="font-bold text-forest-950">Safety & Environmental Notice:</p>
-              {experience.safetyNotes.map((note, i) => (
-                <p key={i}>• {note}</p>
-              ))}
-              <p className="text-[11px] text-charcoal-600 italic pt-1">
-                Notice: Yatra Mitra certifies training protocols, but unpredictable natural terrain demands personal attentiveness.
-              </p>
-            </div>
+              <p>• Stay with your Mitra in crowded bazaar areas and follow their route guidance.</p>
+              <p>• Emergency services India-wide: <strong>112</strong>. Ambulance: <strong>108</strong>. These are also available inside Live Trip Mode.</p>
+              <p>• Respect dress codes at religious sites; your Mitra will brief you before each stop.</p>
+              <p>• Share your trip with a trusted contact using Live Trip Mode&apos;s SHARE TRIP.</p>
+            </section>
           </div>
 
-          {/* Right Column: Sticky Booking Card */}
+          {/* Right — sticky booking rail */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="p-6 rounded-2xl bg-sand-50 border border-forest-900/20 shadow-xl space-y-5 sticky top-24">
-              <div className="flex items-baseline justify-between border-b border-sand-200 pb-4">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-charcoal-600 tracking-wider">
-                    Community Rate
-                  </span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="font-serif text-3xl font-extrabold text-forest-950">
-                      {formatCurrency(experience.pricePerPerson)}
-                    </span>
-                    <span className="text-xs text-charcoal-700">/ person</span>
-                  </div>
+            <div className="space-y-6 lg:sticky lg:top-24">
+              <FairPriceCard experience={experience} />
+
+              {/* Booking card */}
+              <div className="p-6 rounded-2xl bg-forest-900 text-[#F5F1E8] space-y-4">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-[#DFB86C]">Book this Yatra</span>
+                  <span className="font-serif text-2xl font-extrabold">{formatCurrency(experience.pricePerPerson)}</span>
                 </div>
-                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-forest-100 text-forest-900 border border-forest-200">
-                  Micro-Group
-                </span>
+                <p className="text-[11px] text-[#E8DFCF]/80 leading-relaxed">
+                  Booking request confirmed instantly in this MVP — no payment gateway, nothing charged. Your
+                  Mitra confirms the exact date afterwards.
+                </p>
+                <Link
+                  href={`/booking?experienceId=${experience.id}`}
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#B8955A] hover:bg-[#a6844c] text-forest-950 font-bold text-sm shadow-md transition-colors"
+                >
+                  Book experience <ArrowRight className="w-4 h-4" />
+                </Link>
+                <p className="text-[10px] text-center text-[#E8DFCF]/60">
+                  Prototype availability — dates confirmed by your Mitra
+                </p>
               </div>
 
-              {/* Group Size and Community Fund breakdown */}
-              <div className="space-y-3 text-xs">
-                <div className="flex items-center justify-between text-charcoal-800">
-                  <span>Group Size Cap</span>
-                  <strong className="text-forest-950">{experience.groupCap} travelers max</strong>
-                </div>
-                <div className="flex items-center justify-between text-charcoal-800">
-                  <span>Local Host Direct Share</span>
-                  <strong className="text-forest-950">95%</strong>
-                </div>
-                <div className="flex items-center justify-between text-charcoal-800">
-                  <span>Tribal Artisan & Eco Fund</span>
-                  <strong className="text-forest-950">5% included</strong>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-sand-100 border border-sand-300 text-xs text-charcoal-700 space-y-1">
-                <p className="font-bold text-forest-950">Available Schedule:</p>
-                <p>Daily slots at 08:00 AM & 02:30 PM</p>
-                <p className="text-[11px] italic text-charcoal-600">Advance booking required for village entry permits.</p>
-              </div>
-
-              {/* Booking CTA Button */}
-              <Link
-                href={`/booking?experienceId=${experience.id}`}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-forest-900 hover:bg-forest-800 text-sand-50 font-bold text-sm shadow-md transition-colors"
-              >
-                <span>Book Experience</span>
-                <ArrowRight className="w-4 h-4 text-gold-400" />
-              </Link>
-
-              <p className="text-[11px] text-center text-charcoal-600">
-                Instant confirmation • Full refund up to 24h prior
-              </p>
+              {/* Trust passport */}
+              {mitra && <TrustPassport mitra={mitra} compact />}
             </div>
           </div>
         </div>
       </div>
+
+      {/* 3. Related */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <h2 className="font-serif text-2xl sm:text-3xl font-bold text-forest-950">More experiences like this</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {EXPERIENCES.filter((e) => e.id !== experience.id && e.category === experience.category)
+            .concat(EXPERIENCES.filter((e) => e.id !== experience.id && e.category !== experience.category))
+            .slice(0, 3)
+            .map((exp) => (
+              <ExperienceCard key={exp.id} experience={exp} />
+            ))}
+        </div>
+      </section>
     </div>
   );
 }
