@@ -5,26 +5,29 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, Users } from 'lucide-react';
 import type { Experience } from '@/types';
-import DemoBadge from './DemoBadge';
 
 export default function ExperienceCard({ experience }: { experience: Experience }) {
   const exp = experience;
+  const [imgError, setImgError] = React.useState(false);
+
   return (
     <Link
       href={`/experiences/${exp.id}`}
       className="group rounded-2xl overflow-hidden bg-white border border-[#E8DFCF] flex flex-col hover:shadow-lg hover:border-[#B8955A]/50 transition-all duration-300 hover:-translate-y-0.5"
     >
-      <div className="relative aspect-[16/10] w-full bg-[#E8DFCF] overflow-hidden">
-        {exp.image ? (
+      <div className="relative aspect-[16/10] w-full bg-[#16352A] overflow-hidden">
+        {exp.image && !imgError ? (
           <Image
             src={exp.image}
             alt={exp.title}
             fill
+            onError={() => setImgError(true)}
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="absolute inset-0 bg-topo-pattern flex items-center justify-center">
-            <span className="font-serif text-3xl text-[#B8955A]">యా</span>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#16352A] to-[#0D211A] flex flex-col items-center justify-center p-4 text-center">
+            <span className="font-serif text-3xl text-[#DFB86C] font-bold">యా</span>
+            <span className="text-[10px] text-[#E8DFCF]/70 uppercase tracking-widest mt-1">YATRAMITR Experience</span>
           </div>
         )}
         <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-[#0D211A]/85 backdrop-blur-sm text-xs font-semibold text-[#F5F1E8] flex items-center gap-1.5">

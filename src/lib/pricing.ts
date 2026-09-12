@@ -114,6 +114,6 @@ export function checkPrice(input: PriceCheckInput): PriceCheckResult {
     explanation,
     considerations,
     dataNote:
-      'Prototype estimate — subject to field validation. Ranges are Yatra Mitra indicative estimates, not researched market data.',
+      'Prototype estimate — subject to field validation. Ranges are YATRAMITR indicative estimates, not researched market data.',
   };
 }

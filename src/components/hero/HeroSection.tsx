@@ -13,26 +13,26 @@ const Hero3DCanvas = dynamic(() => import('./Hero3DCanvas'), {
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-between overflow-hidden bg-[#0D211A] text-[#F5F1E8]">
+    <section className="relative w-full min-h-[620px] h-[90vh] max-h-[880px] flex flex-col justify-between overflow-hidden bg-[#0D211A] text-[#F5F1E8]">
       {/* 1. Cinematic Hyderabad Landscape Photo Base */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=2000&q=85"
-          alt="Hyderabad city landscape"
+          src="/images/places/charminar.jpg"
+          alt="Charminar Hyderabad heritage"
           fill
           priority
-          className="object-cover object-center opacity-40 mix-blend-luminosity scale-105 transition-transform duration-1000 ease-out"
+          className="object-cover object-center opacity-30 mix-blend-luminosity scale-105 transition-transform duration-1000 ease-out"
         />
       </div>
 
       {/* 2. Sophisticated 3D Topographic Terrain Mesh Layer */}
-      <div className="absolute inset-0 z-10 opacity-70 pointer-events-auto">
+      <div className="absolute inset-0 z-10 opacity-95 pointer-events-auto">
         <Hero3DCanvas />
       </div>
 
       {/* 3. Subtle Editorial Dark Vignette & Gradient Overlays for Readability */}
-      <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-t from-[#0D211A] via-[#0D211A]/60 to-transparent" />
-      <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-r from-[#0D211A]/90 via-[#0D211A]/40 to-transparent" />
+      <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-t from-[#0D211A] via-transparent to-transparent" />
+      <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-r from-[#0D211A]/80 via-[#0D211A]/20 to-transparent" />
 
       {/* 4. Main Editorial Hero Content */}
       <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-36 sm:pt-44 pb-20 flex-1 flex flex-col justify-center">
@@ -50,31 +50,32 @@ export default function HeroSection() {
 
           {/* Supporting Text */}
           <p className="text-base sm:text-xl text-[#E8DFCF] leading-relaxed font-normal max-w-2xl">
-            Discover Hyderabad's hidden gems, meet trusted Mitras, and experience the city beyond the usual tourist trail.
+            Experience authentic heritage lanes, meet trusted native Mitras, and travel with fair, transparent pricing.
           </p>
 
           {/* Dual Action CTAs */}
           <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             <Link
-              href="/explore"
-              className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-md bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A] font-bold text-base shadow-md transition-all transform hover:-translate-y-0.5"
+              href="/find-my-yatra"
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-md bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A] font-bold text-base shadow-lg transition-all transform hover:-translate-y-0.5"
             >
-              <span>Explore Hyderabad</span>
+              <span>Find My Yatra</span>
               <ArrowRight className="w-4 h-4 text-[#0D211A]" />
             </Link>
 
             <Link
-              href="/find-my-yatra"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/20 text-[#FFFFFF] font-medium text-base backdrop-blur-sm transition-colors"
+              href="/explore"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-md bg-white/10 hover:bg-white/20 border border-white/20 text-[#FFFFFF] font-medium text-base backdrop-blur-sm transition-colors cursor-pointer"
             >
-              <span>Find My Yatra</span>
+              <span>Explore Hyderabad & Map</span>
+              <ArrowRight className="w-4 h-4 text-[#B8955A]" />
             </Link>
           </div>
 
           {/* Quiet Trust Footnote */}
-          <div className="pt-2 flex items-center gap-2 text-xs text-[#E8DFCF]/70 font-medium">
+          <div className="pt-2 flex items-center gap-2 text-xs text-[#DFB86C] font-semibold flex-wrap">
             <Compass className="w-4 h-4 text-[#B8955A]" />
-            <span>Curated micro-groups • Verified native custodians • Zero commercial rush</span>
+            <span>24 curated places · Local Mitras · Fair-price guidance · Responsible travel</span>
           </div>
         </div>
       </div>

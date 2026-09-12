@@ -9,7 +9,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   Compass, ArrowRight, ArrowLeft, Check, Sparkles, Clock, Users,
   IndianRupee, MapPin, Heart, ShieldCheck, Save,
@@ -50,7 +49,6 @@ const DEFAULT_PREFS: TravellerPreferences = {
 };
 
 export default function FindMyYatraPage() {
-  const router = useRouter();
   const { user, isDemoSession } = useAuth();
   const [step, setStep] = useState(1);
   const [prefs, setPrefs] = useState<TravellerPreferences>(DEFAULT_PREFS);
@@ -110,236 +108,311 @@ export default function FindMyYatraPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
-      {/* Header */}
-      <div className="space-y-3 max-w-3xl">
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
-          <Compass className="w-3.5 h-3.5" />
-          <span>Find My Yatra</span>
+    <div className="min-h-screen bg-page-find">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
+        {/* Header */}
+        <div className="space-y-3 max-w-3xl relative bg-motif-arch">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
+            <Compass className="w-3.5 h-3.5" />
+            <span>Find My Yatra</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">
+            Tell us how you travel.
+          </h1>
+          <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
+            A few quick preferences and our deterministic matching engine (no black-box AI in the scoring)
+            will pair you with real Hyderabad experiences, Mitras and fair prices.
+          </p>
+          {isDemoSession && (
+            <div className="inline-flex items-center gap-2 text-xs text-[#80311F]">
+              <DemoBadge label="Demo session" /> Preferences stay in this browser only.
+            </div>
+          )}
         </div>
-        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">
-          Tell us how you travel.
-        </h1>
-        <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
-          A few quick preferences and our deterministic matching engine (no black-box AI in the scoring)
-          will pair you with real Hyderabad experiences, Mitras and fair prices.
-        </p>
-        {isDemoSession && (
-          <div className="inline-flex items-center gap-2 text-xs text-[#80311F]">
-            <DemoBadge label="Demo session" /> Preferences stay in this browser only.
+
+        {/* Step indicator */}
+        <div className="flex items-center gap-2 text-xs">
+          {['Interests', 'Preferences', 'Your matches'].map((label, i) => (
+            <React.Fragment key={label}>
+              {i > 0 && <span className="text-[#1D2521]/40">→</span>}
+              <span
+                className={cn(
+                  'px-3 py-1.5 rounded-full font-semibold',
+                  step === i + 1 ? 'bg-[#16352A] text-[#F5F1E8]' : step > i + 1 ? 'bg-forest-50 text-forest-700' : 'bg-[#F5F1E8] text-[#1D2521]/60'
+                )}
+              >
+                {i + 1}. {label}
+              </span>
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* STEPS 1 & 2: Responsive Two-Column Layout */}
+        {(step === 1 || step === 2) && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Sidebar: Live Compass & Deccan Heritage Context (lg:col-span-4) */}
+            <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+              <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-4 text-xs">
+                <div className="flex items-center gap-2 pb-3 border-b border-[#E8DFCF]">
+                  <Compass className="w-4 h-4 text-terracotta-600" />
+                  <h3 className="font-serif font-bold text-base text-[#0D211A]">Your Yatra Compass</h3>
+                </div>
+                <p className="text-charcoal-700 leading-relaxed">
+                  Our deterministic matching maps your authentic passions directly to local heritage experts, craft clusters and living culinary routes.
+                </p>
+
+                {/* Live Selected Interests */}
+                <div className="pt-2 space-y-2">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#B86B4B]">
+                    Selected Interests ({prefs.interests.length})
+                  </span>
+                  {prefs.interests.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {prefs.interests.map((i) => (
+                        <span key={i} className="px-2.5 py-1 rounded-full bg-forest-50 text-forest-800 text-[11px] font-semibold border border-forest-200/60">
+                          {i}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-[#1D2521]/50 italic">
+                      Select one or more categories on the right to calibrate recommendations.
+                    </p>
+                  )}
+                </div>
+
+                {/* Selected Parameters (if step 2) */}
+                {step === 2 && (
+                  <div className="pt-3 border-t border-[#E8DFCF] space-y-2 text-[11px]">
+                    <div className="flex justify-between text-[#1D2521]/70">
+                      <span>Budget per experience:</span>
+                      <strong className="text-[#0D211A]">₹{prefs.budget}</strong>
+                    </div>
+                    <div className="flex justify-between text-[#1D2521]/70">
+                      <span>Crowd energy:</span>
+                      <strong className="text-[#0D211A]">{prefs.crowdPreference}</strong>
+                    </div>
+                    <div className="flex justify-between text-[#1D2521]/70">
+                      <span>Travel style:</span>
+                      <strong className="text-[#0D211A]">{prefs.travelStyle}</strong>
+                    </div>
+                    <div className="flex justify-between text-[#1D2521]/70">
+                      <span>Duration:</span>
+                      <strong className="text-[#0D211A]">{prefs.durationPreference}</strong>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Ethical Tourism & Local Impact Note */}
+              <div className="p-5 rounded-2xl bg-[#FAF8F5] border border-[#E8DFCF] space-y-2 text-xs">
+                <div className="flex items-center gap-2 text-[#16352A] font-bold">
+                  <ShieldCheck className="w-4 h-4 text-forest-700" />
+                  <span>Vetted & Ethical Yatra</span>
+                </div>
+                <p className="text-[11px] text-charcoal-700 leading-relaxed">
+                  Zero predatory tourism commissions. 95% goes directly to your verified local Mitra.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Side: Step Wizard Form (lg:col-span-8) */}
+            <div className="lg:col-span-8 space-y-6">
+              {/* STEP 1: Interests */}
+              {step === 1 && (
+                <div className="p-6 sm:p-8 rounded-2xl bg-card-elevated space-y-6">
+                  <h2 className="font-serif text-2xl font-bold text-[#0D211A]">What pulls you in?</h2>
+                  <div className="flex flex-wrap gap-3">
+                    {INTERESTS.map((i) => {
+                      const active = prefs.interests.includes(i);
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => toggleInterest(i)}
+                          className={cn(
+                            'px-5 py-3 rounded-xl border text-sm font-semibold transition-all',
+                            active
+                              ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A] shadow-sm scale-[1.02]'
+                              : 'bg-[#FAF8F5] text-[#1D2521] border-[#E8DFCF] hover:border-[#B8955A]'
+                          )}
+                        >
+                          {active && <Check className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />}
+                          {i}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex justify-end pt-2">
+                    <button
+                      onClick={() => setStep(2)}
+                      disabled={prefs.interests.length === 0}
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-bold transition-colors disabled:opacity-40"
+                    >
+                      Next: Preferences <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: Preferences */}
+              {step === 2 && (
+                <div className="space-y-6">
+                  {/* Budget */}
+                  <div className="p-6 sm:p-8 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-4">
+                    <h3 className="font-serif text-xl font-bold text-[#0D211A] flex items-center gap-2">
+                      <IndianRupee className="w-5 h-5 text-[#B86B4B]" /> Budget per experience
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {BUDGETS.map((b) => (
+                        <button
+                          key={b}
+                          onClick={() => setPrefs((p) => ({ ...p, budget: b }))}
+                          className={cn(
+                            'px-5 py-2.5 rounded-xl border text-sm font-bold transition-all',
+                            prefs.budget === b ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'bg-[#FAF8F5] border-[#E8DFCF] hover:border-[#B8955A]'
+                          )}
+                        >
+                          ₹{b}{b === 1200 ? '+' : ''}
+                        </button>
+                      ))}
+                      <input
+                        type="number"
+                        min={200}
+                        max={5000}
+                        value={prefs.budget}
+                        onChange={(e) => setPrefs((p) => ({ ...p, budget: Number(e.target.value) || 500 }))}
+                        className="w-28 px-4 py-2.5 rounded-xl border border-[#E8DFCF] text-sm font-semibold focus:outline-none focus:border-[#16352A]"
+                        aria-label="Custom budget"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Crowd + Style */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
+                      <h3 className="font-serif text-lg font-bold text-[#0D211A]">Crowd preference</h3>
+                      {CROWDS.map((c) => (
+                        <button
+                          key={c.value}
+                          onClick={() => setPrefs((p) => ({ ...p, crowdPreference: c.value }))}
+                          className={cn(
+                            'w-full text-left px-4 py-3 rounded-xl border transition-all',
+                            prefs.crowdPreference === c.value ? 'border-[#16352A] bg-forest-50' : 'border-[#E8DFCF] hover:border-[#B8955A]'
+                          )}
+                        >
+                          <p className="text-sm font-bold text-[#0D211A]">{c.label}</p>
+                          <p className="text-[11px] text-[#1D2521]/60">{c.detail}</p>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
+                      <h3 className="font-serif text-lg font-bold text-[#0D211A]">Travel style</h3>
+                      {STYLES.map((s) => (
+                        <button
+                          key={s.value}
+                          onClick={() => setPrefs((p) => ({ ...p, travelStyle: s.value }))}
+                          className={cn(
+                            'w-full text-left px-4 py-3 rounded-xl border transition-all',
+                            prefs.travelStyle === s.value ? 'border-[#16352A] bg-forest-50' : 'border-[#E8DFCF] hover:border-[#B8955A]'
+                          )}
+                        >
+                          <p className="text-sm font-bold text-[#0D211A]">{s.label}</p>
+                          <p className="text-[11px] text-[#1D2521]/60">{s.detail}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Duration + Group */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
+                      <h3 className="font-serif text-lg font-bold text-[#0D211A] flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-[#B86B4B]" /> Duration
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {DURATIONS.map((d) => (
+                          <button
+                            key={d.value}
+                            onClick={() => setPrefs((p) => ({ ...p, durationPreference: d.value }))}
+                            className={cn(
+                              'px-4 py-2 rounded-lg border text-xs font-bold transition-all',
+                              prefs.durationPreference === d.value ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'border-[#E8DFCF] hover:border-[#B8955A]'
+                            )}
+                          >
+                            {d.value}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
+                      <h3 className="font-serif text-lg font-bold text-[#0D211A] flex items-center gap-2">
+                        <Users className="w-4 h-4 text-[#B86B4B]" /> Group
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {GROUPS.map((g) => (
+                          <button
+                            key={g.value}
+                            onClick={() => setPrefs((p) => ({ ...p, groupPreference: g.value }))}
+                            className={cn(
+                              'px-4 py-2 rounded-lg border text-xs font-bold transition-all',
+                              prefs.groupPreference === g.value ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'border-[#E8DFCF] hover:border-[#B8955A]'
+                            )}
+                          >
+                            {g.value}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Languages */}
+                  <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
+                    <h3 className="font-serif text-lg font-bold text-[#0D211A]">Languages you&apos;re comfortable with</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {LANGS.map((l) => (
+                        <button
+                          key={l}
+                          onClick={() => toggleLang(l)}
+                          className={cn(
+                            'px-4 py-2 rounded-lg border text-xs font-bold transition-all',
+                            prefs.languages.includes(l) ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'border-[#E8DFCF] hover:border-[#B8955A]'
+                          )}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <button onClick={() => setStep(1)} className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#0D211A] hover:underline">
+                      <ArrowLeft className="w-3.5 h-3.5" /> Back to interests
+                    </button>
+                    <button
+                      onClick={submit}
+                      disabled={loading}
+                      className="inline-flex items-center gap-2 px-8 py-3.5 rounded-md bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-bold shadow transition-colors disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-[#DFB86C] border-t-transparent rounded-full animate-spin" />
+                          <span>Matching…</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 text-[#DFB86C]" />
+                          <span>Show my matches</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
-      </div>
-
-      {/* Step indicator */}
-      <div className="flex items-center gap-2 text-xs">
-        {['Interests', 'Preferences', 'Your matches'].map((label, i) => (
-          <React.Fragment key={label}>
-            {i > 0 && <span className="text-[#1D2521]/40">→</span>}
-            <span
-              className={cn(
-                'px-3 py-1.5 rounded-full font-semibold',
-                step === i + 1 ? 'bg-[#16352A] text-[#F5F1E8]' : step > i + 1 ? 'bg-forest-50 text-forest-700' : 'bg-[#F5F1E8] text-[#1D2521]/60'
-              )}
-            >
-              {i + 1}. {label}
-            </span>
-          </React.Fragment>
-        ))}
-      </div>
-
-      {/* STEP 1: Interests */}
-      {step === 1 && (
-        <div className="p-6 sm:p-8 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-6">
-          <h2 className="font-serif text-2xl font-bold text-[#0D211A]">What pulls you in?</h2>
-          <div className="flex flex-wrap gap-3">
-            {INTERESTS.map((i) => {
-              const active = prefs.interests.includes(i);
-              return (
-                <button
-                  key={i}
-                  onClick={() => toggleInterest(i)}
-                  className={cn(
-                    'px-5 py-3 rounded-xl border text-sm font-semibold transition-all',
-                    active
-                      ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A] shadow-sm scale-[1.02]'
-                      : 'bg-[#FAF8F5] text-[#1D2521] border-[#E8DFCF] hover:border-[#B8955A]'
-                  )}
-                >
-                  {active && <Check className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />}
-                  {i}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex justify-end">
-            <button
-              onClick={() => setStep(2)}
-              disabled={prefs.interests.length === 0}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-bold transition-colors disabled:opacity-40"
-            >
-              Next: Preferences <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* STEP 2: Preferences */}
-      {step === 2 && (
-        <div className="space-y-6">
-          {/* Budget */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-4">
-            <h3 className="font-serif text-xl font-bold text-[#0D211A] flex items-center gap-2">
-              <IndianRupee className="w-5 h-5 text-[#B86B4B]" /> Budget per experience
-            </h3>
-            <div className="flex flex-wrap gap-3">
-              {BUDGETS.map((b) => (
-                <button
-                  key={b}
-                  onClick={() => setPrefs((p) => ({ ...p, budget: b }))}
-                  className={cn(
-                    'px-5 py-2.5 rounded-xl border text-sm font-bold transition-all',
-                    prefs.budget === b ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'bg-[#FAF8F5] border-[#E8DFCF] hover:border-[#B8955A]'
-                  )}
-                >
-                  ₹{b}{b === 1200 ? '+' : ''}
-                </button>
-              ))}
-              <input
-                type="number"
-                min={200}
-                max={5000}
-                value={prefs.budget}
-                onChange={(e) => setPrefs((p) => ({ ...p, budget: Number(e.target.value) || 500 }))}
-                className="w-28 px-4 py-2.5 rounded-xl border border-[#E8DFCF] text-sm font-semibold focus:outline-none focus:border-[#16352A]"
-                aria-label="Custom budget"
-              />
-            </div>
-          </div>
-
-          {/* Crowd + Style */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
-              <h3 className="font-serif text-lg font-bold text-[#0D211A]">Crowd preference</h3>
-              {CROWDS.map((c) => (
-                <button
-                  key={c.value}
-                  onClick={() => setPrefs((p) => ({ ...p, crowdPreference: c.value }))}
-                  className={cn(
-                    'w-full text-left px-4 py-3 rounded-xl border transition-all',
-                    prefs.crowdPreference === c.value ? 'border-[#16352A] bg-forest-50' : 'border-[#E8DFCF] hover:border-[#B8955A]'
-                  )}
-                >
-                  <p className="text-sm font-bold text-[#0D211A]">{c.label}</p>
-                  <p className="text-[11px] text-[#1D2521]/60">{c.detail}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
-              <h3 className="font-serif text-lg font-bold text-[#0D211A]">Travel style</h3>
-              {STYLES.map((s) => (
-                <button
-                  key={s.value}
-                  onClick={() => setPrefs((p) => ({ ...p, travelStyle: s.value }))}
-                  className={cn(
-                    'w-full text-left px-4 py-3 rounded-xl border transition-all',
-                    prefs.travelStyle === s.value ? 'border-[#16352A] bg-forest-50' : 'border-[#E8DFCF] hover:border-[#B8955A]'
-                  )}
-                >
-                  <p className="text-sm font-bold text-[#0D211A]">{s.label}</p>
-                  <p className="text-[11px] text-[#1D2521]/60">{s.detail}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Duration + Group */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
-              <h3 className="font-serif text-lg font-bold text-[#0D211A] flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#B86B4B]" /> Duration
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {DURATIONS.map((d) => (
-                  <button
-                    key={d.value}
-                    onClick={() => setPrefs((p) => ({ ...p, durationPreference: d.value }))}
-                    className={cn(
-                      'px-4 py-2 rounded-lg border text-xs font-bold transition-all',
-                      prefs.durationPreference === d.value ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'border-[#E8DFCF] hover:border-[#B8955A]'
-                    )}
-                  >
-                    {d.value}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
-              <h3 className="font-serif text-lg font-bold text-[#0D211A] flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#B86B4B]" /> Group
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {GROUPS.map((g) => (
-                  <button
-                    key={g.value}
-                    onClick={() => setPrefs((p) => ({ ...p, groupPreference: g.value }))}
-                    className={cn(
-                      'px-4 py-2 rounded-lg border text-xs font-bold transition-all',
-                      prefs.groupPreference === g.value ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'border-[#E8DFCF] hover:border-[#B8955A]'
-                    )}
-                  >
-                    {g.value}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Languages */}
-          <div className="p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-3">
-            <h3 className="font-serif text-lg font-bold text-[#0D211A]">Languages you&apos;re comfortable with</h3>
-            <div className="flex flex-wrap gap-2">
-              {LANGS.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => toggleLang(l)}
-                  className={cn(
-                    'px-4 py-2 rounded-lg border text-xs font-bold transition-all',
-                    prefs.languages.includes(l) ? 'bg-[#16352A] text-[#F5F1E8] border-[#16352A]' : 'border-[#E8DFCF] hover:border-[#B8955A]'
-                  )}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <button onClick={() => setStep(1)} className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#0D211A] hover:underline">
-              <ArrowLeft className="w-3.5 h-3.5" /> Back to interests
-            </button>
-            <button
-              onClick={submit}
-              disabled={loading}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-md bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-bold shadow transition-colors disabled:opacity-50"
-            >
-              {loading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-[#DFB86C] border-t-transparent rounded-full animate-spin" />
-                  <span>Matching…</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4 text-[#DFB86C]" />
-                  <span>Show my matches</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* STEP 3: Results */}
       {step === 3 && results && (
@@ -470,5 +543,6 @@ export default function FindMyYatraPage() {
         </div>
       )}
     </div>
+  </div>
   );
 }

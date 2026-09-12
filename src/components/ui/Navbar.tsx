@@ -25,7 +25,9 @@ export default function Navbar() {
     { name: 'Explore', href: '/explore' },
     { name: 'Find My Yatra', href: '/find-my-yatra' },
     { name: 'Experiences', href: '/experiences' },
+    { name: 'Food Guide', href: '/food' },
     { name: 'Mitras', href: '/mitras' },
+    { name: 'Safety', href: '/safety' },
     { name: 'How It Works', href: '/how-it-works' },
   ];
 
@@ -46,7 +48,7 @@ export default function Navbar() {
             </div>
             <div>
               <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#F5F1E8] block leading-none">
-                YATRA MITRA
+                YATRAMITR
               </span>
               <span className="text-[10px] tracking-[0.2em] text-[#B8955A] uppercase font-semibold block mt-1">
                 HYDERABAD · TELANGANA
@@ -103,14 +105,14 @@ export default function Navbar() {
           <div className="flex lg:hidden items-center gap-2">
             <Link
               href="/find-my-yatra"
-              className="px-3 py-1.5 text-xs font-semibold rounded bg-[#B8955A] text-[#0D211A]"
+              className="hidden sm:inline-flex px-3 py-1.5 text-xs font-semibold rounded bg-[#B8955A] text-[#0D211A]"
             >
               Find My Yatra
             </Link>
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="p-2 rounded-md text-[#F5F1E8] hover:bg-white/10 focus:outline-none"
+              className="p-2 rounded-md text-[#F5F1E8] hover:bg-white/10 focus:outline-none cursor-pointer"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

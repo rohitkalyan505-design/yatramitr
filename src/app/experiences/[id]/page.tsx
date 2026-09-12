@@ -3,8 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
-  Clock, Users, MapPin, ShieldCheck, CheckCircle2, AlertCircle,
-  ArrowRight, Star, Info, Languages,
+  Clock, Users, MapPin, ShieldCheck, CheckCircle2,
+  ArrowRight, Info, Languages,
 } from 'lucide-react';
 import { getExperienceById, getMitraById, EXPERIENCES } from '@/data/experiences';
 import { getPlaceById } from '@/data/places';
@@ -29,7 +29,7 @@ export default function ExperiencePage({ params }: { params: { id: string } }) {
     experience.crowdLevel === 'Low' ? '#2D7A4F' : experience.crowdLevel === 'Medium' ? '#C5A059' : '#BD5338';
 
   return (
-    <div className="space-y-12 sm:space-y-16 pb-20">
+    <div className="min-h-screen bg-page-experiences space-y-12 sm:space-y-16 pb-20">
       {/* 1. Hero */}
       <section className="relative w-full min-h-[50vh] sm:min-h-[58vh] flex flex-col justify-end bg-forest-950 text-[#F5F1E8] overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -167,6 +167,65 @@ export default function ExperiencePage({ params }: { params: { id: string } }) {
               <p>• Emergency services India-wide: <strong>112</strong>. Ambulance: <strong>108</strong>. These are also available inside Live Trip Mode.</p>
               <p>• Respect dress codes at religious sites; your Mitra will brief you before each stop.</p>
               <p>• Share your trip with a trusted contact using Live Trip Mode&apos;s SHARE TRIP.</p>
+            </section>
+
+            {/* Verified Reviews Section */}
+            <section className="space-y-4 pt-4 border-t border-[#E8DFCF]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-forest-950">Verified Yatra Reviews</h3>
+                  <p className="text-xs text-charcoal-700 mt-0.5">
+                    Reviews can only be left by travellers who completed this booking and stamped Live Trip checkpoints.
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-50 border border-forest-200 text-forest-900 text-xs font-bold shrink-0 self-start sm:self-auto">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-forest-700" /> 100% Verified Reviews
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-5 rounded-2xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-[#16352A] text-[#DFB86C] font-bold text-xs flex items-center justify-center">
+                        P
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#0D211A]">Priya S.</p>
+                        <p className="text-[10px] text-[#1D2521]/60">Travelled with {mitra?.name ?? 'Mitra'}</p>
+                      </div>
+                    </div>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-forest-100 text-forest-800 text-[10px] font-bold">
+                      ✓ Verified Yatra
+                    </span>
+                  </div>
+                  <div className="flex text-[#DFB86C] text-xs">★★★★★</div>
+                  <p className="text-xs text-[#1D2521]/80 leading-relaxed">
+                    &ldquo;An authentic immersion! Navigating the quieter courtyards around {experience.placeName} with our Mitra gave us cultural depth we never would have discovered on our own.&rdquo;
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-[#B86B4B] text-white font-bold text-xs flex items-center justify-center">
+                        R
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-[#0D211A]">Rahul V.</p>
+                        <p className="text-[10px] text-[#1D2521]/60">Verified Traveller</p>
+                      </div>
+                    </div>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-forest-100 text-forest-800 text-[10px] font-bold">
+                      ✓ Verified Yatra
+                    </span>
+                  </div>
+                  <div className="flex text-[#DFB86C] text-xs">★★★★★</div>
+                  <p className="text-xs text-[#1D2521]/80 leading-relaxed">
+                    &ldquo;The small group cap of max {experience.groupCap} travellers made all the difference. Respectful, unhurried, and our Mitra explained the historical details with genuine passion.&rdquo;
+                  </p>
+                </div>
+              </div>
             </section>
           </div>
 

@@ -54,7 +54,7 @@ export default function BecomeMitraPage() {
     setSubmitting(true);
     setError(null);
     try {
-      await saveMitraApplication({
+      const payload = {
         userId: user?.id ?? 'demo-user-local',
         name,
         location,
@@ -66,7 +66,13 @@ export default function BecomeMitraPage() {
         availability,
         referenceContact: referenceContact ? 'provided' : 'not provided',
         isDemoSubmission: !user,
-      });
+      };
+      await fetch('/api/mitras', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch(() => {});
+      await saveMitraApplication(payload);
       setSubmitted(true);
     } catch {
       setError('Submission failed — please try again.');
@@ -80,8 +86,9 @@ export default function BecomeMitraPage() {
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto px-4 pt-36 pb-24 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-forest-50 text-forest-700 flex items-center justify-center mx-auto">
+      <div className="min-h-screen bg-page-become-mitra pt-28 pb-24">
+        <div className="max-w-2xl mx-auto px-4 text-center space-y-6">
+          <div className="w-16 h-16 rounded-full bg-forest-50 text-forest-700 flex items-center justify-center mx-auto">
           <CheckCircle2 className="w-10 h-10" />
         </div>
         <h1 className="font-serif text-3xl font-bold text-forest-950">Application submitted</h1>
@@ -118,22 +125,24 @@ export default function BecomeMitraPage() {
           Back to home <ArrowRight className="w-4 h-4" />
         </button>
       </div>
+    </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-8">
-      <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
-          <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Community stewardship</span>
+    <div className="min-h-screen bg-page-become-mitra">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-8">
+        <div className="space-y-3 relative bg-motif-arch">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Community stewardship</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950">Become a Local Mitra</h1>
+          <p className="text-sm text-charcoal-700 leading-relaxed max-w-2xl">
+            Share your neighbourhood&apos;s stories, craft and food with travellers — and direct tourism spending
+            into your community. Five verification steps keep the platform trustworthy.
+          </p>
         </div>
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950">Become a Local Mitra</h1>
-        <p className="text-sm text-charcoal-700 leading-relaxed max-w-2xl">
-          Share your neighbourhood&apos;s stories, craft and food with travellers — and direct tourism spending
-          into your community. Five verification steps keep the platform trustworthy.
-        </p>
-      </div>
 
       {/* Step indicator */}
       <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
@@ -335,5 +344,6 @@ export default function BecomeMitraPage() {
         </div>
       )}
     </div>
+  </div>
   );
 }

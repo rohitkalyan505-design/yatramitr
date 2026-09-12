@@ -1,7 +1,7 @@
 import { Experience, Mitra, TravellerMatch } from '@/types';
 
 // ============================================================
-// YATRA MITRA — CURATED EXPERIENCES & MITRA RECORDS (MVP)
+// YITRAMITR — CURATED EXPERIENCES & MITRA RECORDS (MVP)
 // ============================================================
 // Experiences are platform-curated for the Hyderabad pilot.
 // All prices are INDICATIVE ("Prototype estimate — subject to
@@ -19,7 +19,7 @@ export const MITRAS: Mitra[] = [
     id: 'mitra-arjun',
     name: 'Arjun Reddy',
     avatar:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+      '/images/mitras/mitra-arjun.jpg',
     bio: 'Old City native. Grew up in the lanes around Charminar and Laad Bazaar; knows the food streets, the craftsmen and the stories locals actually tell.',
     location: 'Old City, Hyderabad',
     homePlaceId: 'charminar',
@@ -48,7 +48,7 @@ export const MITRAS: Mitra[] = [
     id: 'mitra-ayesha',
     name: 'Ayesha Khan',
     avatar:
-      'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=400&q=80',
+      '/images/mitras/mitra-ayesha.jpg',
     bio: 'Third-generation Old City resident. Architecture enthusiast who reads Hyderabad through its doorways, facades and courtyard houses.',
     location: 'Old City, Hyderabad',
     homePlaceId: 'chowmahalla-palace',
@@ -77,7 +77,7 @@ export const MITRAS: Mitra[] = [
     id: 'mitra-rahul',
     name: 'Rahul Naik',
     avatar:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+      '/images/mitras/mitra-rahul.jpg',
     bio: 'History buff from west Hyderabad. Has walked Golconda more times than he can count and still finds new corners of it.',
     location: 'Golconda, Hyderabad',
     homePlaceId: 'golconda-fort',
@@ -106,7 +106,7 @@ export const MITRAS: Mitra[] = [
     id: 'mitra-meera',
     name: 'Meera Rao',
     avatar:
-      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+      '/images/mitras/mitra-meera.jpg',
     bio: 'Craft-sector researcher who works with artisan families across Telangana and hosts slow-craft experiences around the city.',
     location: 'HITEC City, Hyderabad',
     homePlaceId: 'shilparamam',
@@ -145,7 +145,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'Begin at the monument that started it all, then step off the main circuit into lanes where 400-year-old trade continues today. Your Mitra connects the Qutb Shahi story to the shops, shrines and street food that keep the old city alive.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Charmilar-_Hyderabad.jpg/1280px-Charmilar-_Hyderabad.jpg',
+      '/images/experiences/old-city-heritage-walk.jpg',
     durationHours: 3.5,
     durationLabel: '3.5 hours',
     groupCap: 4,
@@ -179,7 +179,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'Hyderabad\u2019s food history is written in its old-city kitchens. Walk with a Mitra who knows which stalls matter, what makes each dish Deccani, and the stories families tell about recipes older than the restaurants serving them.',
     image:
-      'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=80',
+      '/images/experiences/old-city-food-walk.jpg',
     durationHours: 2.5,
     durationLabel: '2.5 hours',
     groupCap: 4,
@@ -213,7 +213,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'Most visits see the gateways and leave. This walk follows the fort\u2019s full logic: how the acoustics worked as security, how water reached the hilltop, and why Golconda\u2019s diamond trade funded it all. Ends at the Bala Hisar pavilion for the classic view.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Golconda_Fort_%28June_2017%29.jpg/1280px-Golconda_Fort_%28June_2017%29.jpg',
+      '/images/experiences/golconda-fort-deep-walk.jpg',
     durationHours: 3,
     durationLabel: '3 hours',
     groupCap: 5,
@@ -247,7 +247,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'For travellers who want the old city\u2019s atmosphere without the crush. This slower walk stays on the quieter side streets — courtyard houses, small shrines, craft workshops and the everyday rhythm of a heritage quarter still fully alive.',
     image:
-      'https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1200&q=80',
+      '/images/experiences/quiet-heritage-lanes.jpg',
     durationHours: 3,
     durationLabel: '3 hours',
     groupCap: 3,
@@ -281,7 +281,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'Trace the Asaf Jahi story from the durbar halls of Chowmahalla to the artefacts that carried royal Hyderabad into the modern age. Your Mitra explains what the palaces were for — not just what they looked like.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Chowmahalla_Palace%2C_Hyderabad_%28main_hall%29.jpg/1280px-Chowmahalla_Palace%2C_Hyderabad_%28main_hall%29.jpg',
+      '/images/experiences/royal-hyderabad-day.jpg',
     durationHours: 5,
     durationLabel: '5 hours',
     groupCap: 4,
@@ -315,7 +315,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'A slow afternoon built around conversations: weavers, toy-makers and metalworkers show their craft and tell you where their skills come from. No shopping pressure — the point is meeting the makers behind Telangana\u2019s craft traditions.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Shilparamam_Hitech_City.jpg/1280px-Shilparamam_Hitech_City.jpg',
+      '/images/experiences/crafts-makers-afternoon.jpg',
     durationHours: 3,
     durationLabel: '3 hours',
     groupCap: 5,
@@ -349,7 +349,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'A relaxed evening walk along the lake that linked two cities. Your Mitra weaves Qutb Shahi water history, the Buddha statue\u2019s journey and the everyday lakeside culture of modern Hyderabad into one easy stroll.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Hussain_Sagar_Lake%2C_Hyderabad.jpg/1280px-Hussain_Sagar_Lake%2C_Hyderabad.jpg',
+      '/images/experiences/lakefront-evening-walk.jpg',
     durationHours: 2,
     durationLabel: '2 hours',
     groupCap: 5,
@@ -382,7 +382,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'Travel out to Palampet with a Mitra who can read the temple\u2019s details: the floating-brick engineering, the dancer brackets, the basalt Nandi. A proper day in the Telangana countryside ending back in Hyderabad by evening.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Ramappa_Temple%2C_Warangal_%282021%29.jpg/1280px-Ramappa_Temple%2C_Warangal_%282021%29.jpg',
+      '/images/experiences/ramappa-day-trip.jpg',
     durationHours: 8,
     durationLabel: 'Full day',
     groupCap: 4,
@@ -416,7 +416,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'Experience Hyderabad\u2019s living spiritual side respectfully: marble architecture at Birla Mandir, a modern devotional community in action, and the rituals that organise neighbourhood mornings across the city.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Birla_Mandir%2C_Hyderabad.jpg/1280px-Birla_Mandir%2C_Hyderabad.jpg',
+      '/images/experiences/spiritual-hyderabad-morning.png',
     durationHours: 3,
     durationLabel: '3 hours',
     groupCap: 4,
@@ -450,7 +450,7 @@ export const EXPERIENCES: Experience[] = [
     description:
       'Designed around light: start as the bazaar lamps come on, work the Charminar blue-hour angles, then move into lanes where old signage and daily life make frames. Your Mitra knows the spots and the etiquette for photographing people.',
     image:
-      'https://images.unsplash.com/photo-1572445271230-a78b5944a659?auto=format&fit=crop&w=1200&q=80',
+      '/images/experiences/photography-old-city-blue-hour.jpg',
     durationHours: 2.5,
     durationLabel: '2.5 hours',
     groupCap: 4,

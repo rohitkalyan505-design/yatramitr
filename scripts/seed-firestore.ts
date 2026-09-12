@@ -32,22 +32,35 @@ try {
 
 // --- Datasets are loaded as plain JSON-ish via ts compile-free trick ---
 // We inline a small loader: since this runs via tsx, direct imports work.
+// firebase-admin v12+ exposes Firestore via the 'firebase-admin/firestore'
+// subpath; the root entry no longer carries `firestore` in v14.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { getFirestore } = require('firebase-admin/firestore');
+
+// firebase-admin's CJS entry moved `cert` to the top level in newer
+// versions (admin.credential is no longer always present). Support both shapes.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function certFn(a: any): (arg: unknown) => unknown {
+  return a.credential?.cert ?? a.cert;
+}
+
 async function main() {
   const { PLACES } = await import('../src/data/places');
   const { EXPERIENCES, MITRAS } = await import('../src/data/experiences');
+  const { FOODS } = await import('../src/data/food');
 
   // --- Service account resolution ---
   const saPath = path.resolve(process.cwd(), 'service-account.json');
   let credential;
   if (fs.existsSync(saPath)) {
-    credential = admin.credential.cert(saPath);
+    credential = certFn(admin)(saPath);
     console.log('Using service account at', saPath);
   } else if (
     process.env.FIREBASE_PROJECT_ID &&
     process.env.FIREBASE_CLIENT_EMAIL &&
     process.env.FIREBASE_PRIVATE_KEY
   ) {
-    credential = admin.credential.cert({
+    credential = certFn(admin)({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
@@ -63,7 +76,7 @@ async function main() {
   }
 
   admin.initializeApp({ credential });
-  const db = admin.firestore();
+  const db = getFirestore();
 
   const now = new Date().toISOString();
 
@@ -95,6 +108,14 @@ async function main() {
     const doc = { ...mitra, createdAt: now };
     await db.collection('mitras').doc(mitra.id).set(doc, { merge: true });
     console.log(`  ✓ mitras/${mitra.id} — ${mitra.name} (DEMO)`);
+  }
+
+  // --- Seed food (8 supplied entries) ---
+  console.log('\nSeeding foods (from the supplied street-food guide)…');
+  for (const food of FOODS) {
+    const doc = { ...food, createdAt: now, updatedAt: now };
+    await db.collection('foods').doc(food.id).set(doc, { merge: true });
+    console.log(`  ✓ foods/${food.id} — ${food.name}`);
   }
 
   // --- Seed price ranges (indicative, honest) ---
@@ -134,6 +155,7 @@ async function main() {
   console.log(`   places:       ${PLACES.length} (incl. 1 requiring verification, excluded from map)`);
   console.log(`   experiences:  ${EXPERIENCES.length} (indicative prices)`);
   console.log(`   mitras:       ${MITRAS.length} (all isDemo: true)`);
+  console.log(`   foods:        ${FOODS.length} (supplied street-food guide)`);
   console.log(`   priceRanges:  ${priceRanges.length}`);
   console.log('\nRe-running this script is safe — documents are upserted by ID.');
   process.exit(0);

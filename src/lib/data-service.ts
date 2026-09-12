@@ -42,11 +42,20 @@ import type {
 const db: Firestore | null =
   isFirebaseConfigured && getFirebaseApp() ? getFirestore(getFirebaseApp()!) : null;
 
-// ---------- Local echo stores (demo mode) ----------
+// ---------- Local echo stores (demo mode & cross-chunk sync) ----------
 
-const LOCAL_BOOKINGS: Booking[] = [];
-const LOCAL_TRIPS: Record<string, Trip> = {}; // bookingId -> trip
-const LOCAL_REVIEWS: Review[] = [];
+const g = (typeof globalThis !== 'undefined' ? globalThis : {}) as {
+  __ym_local_bookings?: Booking[];
+  __ym_local_trips?: Record<string, Trip>;
+  __ym_local_reviews?: Review[];
+};
+if (!g.__ym_local_bookings) g.__ym_local_bookings = [];
+if (!g.__ym_local_trips) g.__ym_local_trips = {};
+if (!g.__ym_local_reviews) g.__ym_local_reviews = [];
+
+const LOCAL_BOOKINGS: Booking[] = g.__ym_local_bookings;
+const LOCAL_TRIPS: Record<string, Trip> = g.__ym_local_trips; // bookingId -> trip
+const LOCAL_REVIEWS: Review[] = g.__ym_local_reviews;
 
 // ---------- Helpers ----------
 
@@ -67,6 +76,7 @@ function tsToDate(v: unknown): string | undefined {
   if (typeof v === 'string') return v;
   return undefined;
 }
+void tsToDate; // kept for upcoming Firestore timestamp mapping
 
 async function safeGetAll<T>(
   name: string,
@@ -74,8 +84,13 @@ async function safeGetAll<T>(
 ): Promise<T[] | null> {
   if (!db) return null;
   try {
-    const snap = await getDocs(collection(db, name));
-    return snap.docs.map((d) => mapper(d.data() as unknown as Record<string, unknown>, d.id));
+    const fetchPromise = getDocs(collection(db, name));
+    const timeoutPromise = new Promise<null>((resolve) =>
+      setTimeout(() => resolve(null), 600)
+    );
+    const snap = (await Promise.race([fetchPromise, timeoutPromise])) as any;
+    if (!snap || !snap.docs) return null;
+    return snap.docs.map((d: any) => mapper(d.data() as unknown as Record<string, unknown>, d.id));
   } catch {
     return null;
   }
@@ -100,7 +115,10 @@ export async function fetchMapPlaces(): Promise<Place[]> {
   const places = await fetchPlaces();
   return places.filter(
     (p): p is Place & { latitude: number; longitude: number } =>
-      p.latitude !== null && p.longitude !== null
+      p.showOnMap !== false &&
+      !p.requiresVerification &&
+      p.latitude !== null &&
+      p.longitude !== null
   );
 }
 
@@ -205,20 +223,85 @@ export async function createBooking(input: {
 }
 
 export async function fetchBookingsForUser(userId: string): Promise<Booking[]> {
+  const result: Booking[] = [];
+  const seenIds = new Set<string>();
+
+  const addUnique = (bks: Booking[]) => {
+    for (const b of bks) {
+      if (b && b.id && !seenIds.has(b.id)) {
+        seenIds.add(b.id);
+        result.push(b);
+      }
+    }
+  };
+
+  // 1. In browser, fetch from server API route /api/bookings (uses Firestore Admin SDK)
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch(`/api/bookings?userId=${encodeURIComponent(userId)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.bookings)) {
+          addUnique(data.bookings);
+        }
+      }
+    } catch {
+      // offline / network error fallback
+    }
+
+    // 2. Also check localStorage
+    try {
+      const raw = localStorage.getItem('ym_bookings_v2');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          const matched = parsed.filter(
+            (b: Booking) => b.userId === userId || userId === 'demo-user-local' || b.userId === 'demo-user-local'
+          );
+          addUnique(matched);
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  // 3. Query client Firestore if configured
   if (db) {
     try {
       const q = query(collection(db, 'bookings'), where('userId', '==', userId));
       const snap = await getDocs(q);
       const remote = snap.docs.map((d) => ({ ...(d.data() as Booking), id: d.id }));
-      if (remote.length > 0) return remote;
+      addUnique(remote);
     } catch {
-      // fall through to local
+      // fall through
     }
   }
-  return LOCAL_BOOKINGS.filter((b) => b.userId === userId);
+
+  // 4. In-memory array
+  addUnique(LOCAL_BOOKINGS.filter((b) => b.userId === userId || userId === 'demo-user-local'));
+
+  return result;
 }
 
 export async function fetchBookingById(id: string): Promise<Booking | undefined> {
+  // Check in-memory first
+  const memory = LOCAL_BOOKINGS.find((b) => b.id === id);
+  if (memory) return memory;
+
+  // Check browser localStorage
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('ym_bookings_v2');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const found = parsed.find((b: Booking) => b.id === id);
+        if (found) return found;
+      }
+    } catch {}
+  }
+
+  // Check client Firestore
   if (db) {
     try {
       const d = await getDoc(doc(db, 'bookings', id));
@@ -227,12 +310,27 @@ export async function fetchBookingById(id: string): Promise<Booking | undefined>
       // fall through
     }
   }
-  return LOCAL_BOOKINGS.find((b) => b.id === id);
+  return undefined;
 }
 
 export async function updateBookingStatus(id: string, status: Booking['status']): Promise<void> {
   const local = LOCAL_BOOKINGS.find((b) => b.id === id);
   if (local) local.status = status;
+
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('ym_bookings_v2');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const idx = parsed.findIndex((b: Booking) => b.id === id);
+        if (idx !== -1) {
+          parsed[idx].status = status;
+          localStorage.setItem('ym_bookings_v2', JSON.stringify(parsed));
+        }
+      }
+    } catch {}
+  }
+
   if (db) {
     try {
       await updateDoc(doc(db, 'bookings', id), { status });
@@ -276,6 +374,12 @@ export async function createTripForBooking(booking: Booking): Promise<Trip> {
     createdAt: tsNow(),
   };
 
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(`ym_trip_${booking.id}`, JSON.stringify(trip));
+    } catch {}
+  }
+
   if (db) {
     try {
       await setDoc(doc(db, 'trips', trip.id), { ...trip });
@@ -289,6 +393,37 @@ export async function createTripForBooking(booking: Booking): Promise<Trip> {
 }
 
 export async function fetchTripForBooking(bookingId: string): Promise<Trip | undefined> {
+  // Check memory
+  if (LOCAL_TRIPS[bookingId]) return LOCAL_TRIPS[bookingId];
+
+  // In browser, check localStorage
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem(`ym_trip_${bookingId}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        LOCAL_TRIPS[bookingId] = parsed;
+        return parsed;
+      }
+    } catch {}
+
+    // In browser, also try GET /api/trips/[id]/checkin (reads Firestore Admin)
+    try {
+      const res = await fetch(`/api/trips/${encodeURIComponent(bookingId)}/checkin`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.trip) {
+          LOCAL_TRIPS[bookingId] = data.trip;
+          try {
+            localStorage.setItem(`ym_trip_${bookingId}`, JSON.stringify(data.trip));
+          } catch {}
+          return data.trip;
+        }
+      }
+    } catch {}
+  }
+
+  // Check client Firestore
   if (db) {
     try {
       const d = await getDoc(doc(db, 'trips', `TRIP-${bookingId}`));
@@ -336,6 +471,12 @@ export async function checkInToTrip(bookingId: string, checkpointId: string): Pr
   // Keep the booking lifecycle in sync: a completed trip completes the booking
   if (trip.status === 'completed') {
     await updateBookingStatus(bookingId, 'completed');
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(`ym_trip_${bookingId}`, JSON.stringify(trip));
+    } catch {}
   }
 
   if (db) {
@@ -400,8 +541,10 @@ export async function loadTravellerPreferences(userId: string): Promise<Travelle
     try {
       const d = await getDoc(doc(db, 'travellerProfiles', userId));
       if (d.exists()) {
-        const data = d.data() as TravellerPreferences & { updatedAt?: string };
-        const { updatedAt, ...prefs } = data;
+        const data = d.data() as Omit<TravellerPreferences, never> & Record<string, unknown>;
+        // Strip the audit field; the caller wants preferences only.
+        const { updatedAt: _omit, ...prefs } = data as { updatedAt?: string } & TravellerPreferences;
+        void _omit;
         return prefs;
       }
     } catch {
@@ -411,8 +554,9 @@ export async function loadTravellerPreferences(userId: string): Promise<Travelle
   try {
     const raw = localStorage.getItem(`ym-prefs-${userId}`);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as TravellerPreferences & { updatedAt?: string };
-    const { updatedAt, ...prefs } = parsed;
+    const parsed = JSON.parse(raw) as { updatedAt?: string } & TravellerPreferences;
+    const { updatedAt: _omit, ...prefs } = parsed;
+    void _omit;
     return prefs;
   } catch {
     return null;
@@ -472,6 +616,38 @@ export async function fetchUserProfile(id: string): Promise<UserProfile | null> 
 }
 
 // ---------- Traveller matching (deterministic, demo pool) ----------
+
+/**
+ * Persist the traveller's match session to Firestore (`travelMatches`)
+ * and record a notification (`notifications`). Best-effort: failures
+ * never break the UI, matching the local-echo philosophy.
+ */
+export async function recordTravelMatchSession(
+  userId: string,
+  prefs: TravellerPreferences | null,
+  matches: TravellerMatch[]
+): Promise<void> {
+  if (!db) return;
+  try {
+    await addDoc(collection(db, 'travelMatches'), {
+      userId,
+      createdAt: tsNow(),
+      preferences: prefs ?? {},
+      matchIds: matches.map((m) => m.id),
+      topMatchId: matches[0]?.id ?? null,
+    });
+    await addDoc(collection(db, 'notifications'), {
+      userId,
+      type: 'travel_match_generated',
+      title: 'New travel matches ready',
+      body: `${matches.length} traveller matches were generated from your preferences.`,
+      read: false,
+      createdAt: tsNow(),
+    });
+  } catch {
+    // offline / rules-blocked: notifications stay local-echo only
+  }
+}
 
 export async function fetchTravellerMatches(
   prefs: TravellerPreferences | null

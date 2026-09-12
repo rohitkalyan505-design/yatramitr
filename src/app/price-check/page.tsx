@@ -52,21 +52,22 @@ export default function PriceCheckPage() {
     'w-full px-4 py-2.5 rounded-xl border border-sand-300 bg-white text-sm font-medium focus:outline-none focus:border-forest-800';
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-8">
-      <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
-          <Tag className="w-3.5 h-3.5" />
-          <span>Consumer protection</span>
+    <div className="min-h-screen bg-page-price">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-8">
+        <div className="space-y-3 relative bg-motif-arch">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
+            <Tag className="w-3.5 h-3.5" />
+            <span>Consumer protection</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950">Check a price</h1>
+          <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
+            Before you pay, understand what the price includes. Compare any quoted guiding price against a
+            typical indicative range — and see what could justify a difference.
+          </p>
         </div>
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950">Check a price</h1>
-        <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
-          Before you pay, understand what the price includes. Compare any quoted guiding price against a
-          typical indicative range — and see what could justify a difference.
-        </p>
-      </div>
 
-      {/* Form */}
-      <form onSubmit={submit} className="p-6 sm:p-8 rounded-2xl bg-sand-100 border border-sand-300 space-y-5">
+        {/* Form */}
+        <form onSubmit={submit} className="p-6 sm:p-8 rounded-2xl bg-card-elevated space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-[10px] uppercase font-bold tracking-wider text-charcoal-700 block mb-1.5">Service</label>
@@ -216,10 +217,11 @@ export default function PriceCheckPage() {
         <p className="font-serif text-lg font-bold">Why a &ldquo;high&rdquo; price isn&apos;t automatically unfair</p>
         <p className="text-xs text-[#E8DFCF]/85 leading-relaxed">
           Duration, private transport, entry fees, food, group size, season and specialist knowledge all move
-          a fair price up or down. Yatra Mitra&apos;s Fair Price Guide gives you the questions to ask — not a
+          a fair price up or down. YATRAMITR&apos;s Fair Price Guide gives you the questions to ask — not a
           verdict on any individual.
         </p>
       </div>
     </div>
+  </div>
   );
 }

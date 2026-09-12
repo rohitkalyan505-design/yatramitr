@@ -9,10 +9,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import {
-  Calendar, MapPin, Clock, Users, ArrowRight, ShieldCheck, Sparkles,
+  Calendar, Clock, Users, ArrowRight, Sparkles,
   Compass, CheckCircle2, Star, Loader2, HeartHandshake, Route, User,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
@@ -21,7 +20,7 @@ import {
   fetchTripForBooking,
   fetchTravellerMatches,
   loadTravellerPreferences,
-  submitReview,
+  recordTravelMatchSession,
 } from '@/lib/data-service';
 import DemoBadge from '@/components/ui/DemoBadge';
 import { formatCurrency, cn } from '@/lib/utils';
@@ -54,6 +53,8 @@ function DashboardContent() {
       setBookings(bks.sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
       setMatches(mts);
       setPrefs(p);
+      // Best-effort audit trail in Firestore (no-op in demo mode):
+      void recordTravelMatchSession(userId, p, mts);
 
       const tripMap: Record<string, Trip> = {};
       for (const b of bks) {
@@ -105,7 +106,7 @@ function DashboardContent() {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center">
+      <div className="min-h-screen bg-page-dashboard flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-[#16352A]" />
       </div>
     );
@@ -114,12 +115,11 @@ function DashboardContent() {
   const displayName = user?.name ?? 'Traveller';
   const upcoming = bookings.filter((b) => b.status !== 'completed');
   const past = bookings.filter((b) => b.status === 'completed');
-  const activeTrip = Object.values(trips).find((t) => t.status === 'active');
   const totalSpend = bookings.reduce((s, b) => s + b.totalAmount, 0);
   const totalCommunity = bookings.reduce((s, b) => s + b.communityContribution, 0);
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#1D2521] pt-28 pb-24">
+    <div className="min-h-screen bg-page-dashboard text-[#1D2521] pt-28 pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#E8DFCF]">
@@ -149,6 +149,29 @@ function DashboardContent() {
               Log out
             </button>
           </div>
+        </div>
+
+        {/* Quick Product Navigation */}
+        <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm text-xs font-semibold">
+          <span className="text-[10px] uppercase tracking-wider text-[#1D2521]/60 px-2 font-bold">Quick Jump:</span>
+          <Link href="/explore" className="px-3 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#16352A] hover:text-[#F5F1E8] border border-[#E8DFCF] transition-colors">
+            🗺️ Explore Map
+          </Link>
+          <Link href="/find-my-yatra" className="px-3 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#16352A] hover:text-[#F5F1E8] border border-[#E8DFCF] transition-colors">
+            🧭 Find My Yatra
+          </Link>
+          <Link href="/experiences" className="px-3 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#16352A] hover:text-[#F5F1E8] border border-[#E8DFCF] transition-colors">
+            🎒 Experiences
+          </Link>
+          <Link href="/food" className="px-3 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#16352A] hover:text-[#F5F1E8] border border-[#E8DFCF] transition-colors">
+            🍲 Street Food Guide
+          </Link>
+          <Link href="/mitras" className="px-3 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#16352A] hover:text-[#F5F1E8] border border-[#E8DFCF] transition-colors">
+            👥 Local Mitras
+          </Link>
+          <Link href="/price-check" className="px-3 py-1.5 rounded-lg bg-[#FAF8F5] hover:bg-[#16352A] hover:text-[#F5F1E8] border border-[#E8DFCF] transition-colors">
+            🏷️ Fair Price Check
+          </Link>
         </div>
 
         {/* Impact section (after trip completion via ?impact= or any completed trip) */}

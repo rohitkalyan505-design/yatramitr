@@ -16,14 +16,15 @@ interface Waypoint {
 }
 
 const WAYPOINTS: Waypoint[] = [
-  { id: 'hyderabad', name: 'Hyderabad', region: 'Deccan Plateau (Featured)', position: [0.8, 0.42, 0.4], color: '#DFB86C' },
-  { id: 'gandikota', name: 'Gandikota Gorge', region: 'Deccan Plateau', position: [0.1, 0.32, 1.2], color: '#BD5338' },
-  { id: 'ziro-valley', name: 'Ziro Valley', region: 'Arunachal Highlands', position: [2.2, 0.46, -1.5], color: '#C5A059' },
-  { id: 'chopta-tungnath', name: 'Chopta Meadow', region: 'Garhwal Himalayas', position: [-0.6, 0.65, -1.8], color: '#FAF8F5' },
-  { id: 'majuli-island', name: 'Majuli River Island', region: 'Brahmaputra Valley', position: [2.6, 0.28, -0.9], color: '#DFB86C' },
+  { id: 'charminar', name: 'Charminar', region: 'Old City Origins', position: [0.8, 0.42, 0.4], color: '#DFB86C' },
+  { id: 'golconda-fort', name: 'Golconda Fort', region: 'Acoustic Citadel', position: [-0.6, 0.38, 0.8], color: '#BD5338' },
+  { id: 'hussain-sagar', name: 'Hussain Sagar', region: 'Heart Lake & Monolith', position: [0.2, 0.28, -0.6], color: '#2D7A4F' },
+  { id: 'qutb-shahi-tombs', name: 'Qutb Shahi Tombs', region: 'Royal Necropolis', position: [-1.4, 0.35, -0.2], color: '#DFB86C' },
+  { id: 'ramappa-temple', name: 'Ramappa Temple', region: 'Kakatiya UNESCO Heritage', position: [2.2, 0.52, -1.2], color: '#C5A059' },
+  { id: 'shilparamam', name: 'Shilparamam', region: 'Living Crafts Village', position: [1.6, 0.32, 1.1], color: '#B86B4B' },
 ];
 
-// Topographical Terrain Mesh - Earthy Indian landscape relief
+// Topographical Terrain Mesh - Earthy Deccan landscape relief
 function TopoTerrain() {
   const meshRef = useRef<THREE.Mesh>(null);
 
@@ -53,16 +54,16 @@ function TopoTerrain() {
   return (
     <mesh ref={meshRef} geometry={geometry} position={[0, -0.85, 0]}>
       <meshStandardMaterial
-        color="#183324"
-        roughness={0.88}
-        metalness={0.08}
+        color="#22533B"
+        roughness={0.55}
+        metalness={0.25}
         flatShading={false}
       />
     </mesh>
   );
 }
 
-// Subtle surveyor cartographic contour lines
+// Subtle cartographic contour lines
 function TopoContourWire() {
   const { geometry } = useMemo(() => {
     const geom = new THREE.PlaneGeometry(16, 16, 32, 32);
@@ -82,10 +83,10 @@ function TopoContourWire() {
   return (
     <mesh geometry={geometry} position={[0, -0.85, 0]}>
       <meshBasicMaterial
-        color="#C5A059"
+        color="#DFB86C"
         wireframe
         transparent
-        opacity={0.09}
+        opacity={0.36}
       />
     </mesh>
   );
@@ -239,18 +240,15 @@ export default function Hero3DCanvas() {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ pointerEvents: 'auto' }}
       >
-        <color attach="background" args={['#0E1B15']} />
-        <fog attach="fog" args={['#0E1B15', 5, 13]} />
-
-        {/* Warm Indian Dawn Ambient Light */}
-        <ambientLight intensity={0.55} color="#E4EFE8" />
+        {/* Warm Indian Dawn Ambient Light & Sun Flare */}
+        <ambientLight intensity={0.85} color="#E4EFE8" />
         <directionalLight
-          position={[6, 7, 3]}
-          intensity={1.3}
-          color="#F5E4C3"
+          position={[6, 8, 4]}
+          intensity={1.8}
+          color="#FCEFD2"
         />
         {/* Soft Terracotta Ground Glow */}
-        <pointLight position={[-3, 1.5, -1]} intensity={0.6} color="#C4684D" />
+        <pointLight position={[-3, 1.5, -1]} intensity={0.9} color="#C4684D" />
 
         {/* Indian Geographic Relief */}
         <TopoTerrain />

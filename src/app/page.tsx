@@ -4,26 +4,22 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
-  Compass, 
-  MapPin, 
   ShieldCheck, 
   Clock, 
-  IndianRupee, 
   ArrowRight, 
-  Users, 
   Sparkles, 
   Check, 
   Star,
   ChevronRight,
-  Shield,
   FileCheck,
   Tag,
   AlertCircle
 } from 'lucide-react';
 import HeroSection from '@/components/hero/HeroSection';
-import { EXPERIENCES, MITRAS, DEMO_TRAVELLERS } from '@/data/experiences';
+import HyderabadMap from '@/components/map/HyderabadMap';
 import { PLACES } from '@/data/places';
-import type { HiddenGem, TravelMatch } from '@/types';
+import { EXPERIENCES, MITRAS, DEMO_TRAVELLERS } from '@/data/experiences';
+import type { HiddenGem, TravelMatch, PlaceCategory } from '@/types';
 
 // Homepage hidden-gem shortlist — derived from the real dataset
 const HIDDEN_GEMS: HiddenGem[] = [
@@ -34,7 +30,7 @@ const HIDDEN_GEMS: HiddenGem[] = [
     shortDescription: 'Residential lanes, old courtyards and living workshops away from the busiest circuit.',
     experienceType: 'Heritage Walk',
     estimatedPrice: 600,
-    image: 'https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/experiences/quiet-heritage-lanes.jpg',
     whyMatchesYou: [
       'Quieter than the Charminar main circuit.',
       'Great for architecture lovers.',
@@ -51,7 +47,7 @@ const HIDDEN_GEMS: HiddenGem[] = [
     shortDescription: 'A guided tasting trail through the old city\u2019s legendary food lanes.',
     experienceType: 'Food & Culture',
     estimatedPrice: 700,
-    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/experiences/old-city-food-walk.jpg',
     whyMatchesYou: [
       'Discover Hyderabad\u2019s Deccani food traditions.',
       '5–6 guided tasting stops, food costs included.',
@@ -68,7 +64,7 @@ const HIDDEN_GEMS: HiddenGem[] = [
     shortDescription: 'Meet Telangana\u2019s working artisans and buy direct from makers.',
     experienceType: 'Arts & Crafts',
     estimatedPrice: 550,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Shilparamam_Hitech_City.jpg/1280px-Shilparamam_Hitech_City.jpg',
+    image: '/images/experiences/crafts-makers-afternoon.jpg',
     whyMatchesYou: [
       'Meet 3–4 working artisan families.',
       'Watch crafts being made, not just sold.',
@@ -85,7 +81,7 @@ const HIDDEN_GEMS: HiddenGem[] = [
     shortDescription: 'Acoustics, water systems, royal apartments and the hilltop Bala Hisar.',
     experienceType: 'History & Architecture',
     estimatedPrice: 750,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Golconda_Fort_%28June_2017%29.jpg/1280px-Golconda_Fort_%28June_2017%29.jpg',
+    image: '/images/experiences/golconda-fort-deep-walk.jpg',
     whyMatchesYou: [
       'Qutb Shahi capital history in depth.',
       'The famous acoustic demonstration.',
@@ -112,6 +108,9 @@ const TRAVEL_MATCHES: TravelMatch[] = DEMO_TRAVELLERS.map((t) => ({
 export default function HomePage() {
   const [selectedGem, setSelectedGem] = useState<HiddenGem>(HIDDEN_GEMS[0]);
   const [selectedMatch, setSelectedMatch] = useState(TRAVEL_MATCHES[0]);
+  const [mapCategory, setMapCategory] = useState<PlaceCategory | 'All'>('All');
+
+  const filteredMapPlaces = mapCategory === 'All' ? PLACES : PLACES.filter(p => p.category === mapCategory);
 
   // Featured experiences for Hyderabad
   const featuredExperiences = [
@@ -128,12 +127,12 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="bg-[#FAF8F5] text-[#1D2521] selection:bg-[#B86B4B] selection:text-white">
+    <div className="bg-page-home text-[#1D2521] selection:bg-[#B86B4B] selection:text-white">
       {/* 1. Hero Section */}
       <HeroSection />
 
       {/* 2. "Beyond the tourist map." (Editorial Problem & Manifesto) */}
-      <section id="beyond-map" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="beyond-map" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-motif-arch">
         <div className="max-w-3xl mb-16 space-y-4">
           <span className="text-xs font-semibold tracking-[0.2em] text-[#B86B4B] uppercase block">
             The Purpose
@@ -142,13 +141,13 @@ export default function HomePage() {
             Beyond the tourist map.
           </h2>
           <p className="text-base sm:text-lg text-[#1D2521]/80 leading-relaxed font-normal">
-            Most travellers see the same landmarks, eat at the same restaurants and follow the same routes. Yatra Mitra helps them discover the places, stories and experiences that rarely appear on the usual itinerary.
+            Most travellers see the same landmarks, eat at the same restaurants and follow the same routes. YATRAMITR helps them discover the places, stories and experiences that rarely appear on the usual itinerary.
           </p>
         </div>
 
         {/* 3 Editorial Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-8 rounded-xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-4 hover:border-[#B8955A]/50 transition-colors">
+          <div className="p-8 rounded-2xl bg-card-elevated space-y-4 hover:border-[#B8955A]/50 transition-colors">
             <span className="font-serif text-3xl sm:text-4xl font-light text-[#B86B4B] block">
               01
             </span>
@@ -160,7 +159,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="p-8 rounded-xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-4 hover:border-[#B8955A]/50 transition-colors">
+          <div className="p-8 rounded-2xl bg-card-elevated space-y-4 hover:border-[#B8955A]/50 transition-colors">
             <span className="font-serif text-3xl sm:text-4xl font-light text-[#B86B4B] block">
               02
             </span>
@@ -172,7 +171,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="p-8 rounded-xl bg-[#F5F1E8] border border-[#E8DFCF] space-y-4 hover:border-[#B8955A]/50 transition-colors">
+          <div className="p-8 rounded-2xl bg-card-elevated space-y-4 hover:border-[#B8955A]/50 transition-colors">
             <span className="font-serif text-3xl sm:text-4xl font-light text-[#B86B4B] block">
               03
             </span>
@@ -187,7 +186,7 @@ export default function HomePage() {
       </section>
 
       {/* 3. Hidden Gems Section: "Hyderabad, beyond the obvious." */}
-      <section className="py-24 bg-[#F5F1E8] border-y border-[#E8DFCF]">
+      <section className="py-24 bg-section-cream border-y border-[#E8DFCF] bg-motif-jali">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-14">
             <div className="space-y-3 max-w-2xl">
@@ -288,7 +287,7 @@ export default function HomePage() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/explore"
+                  href={`/places/${selectedGem.id === 'golconda-fort-deep-walk' ? 'golconda-fort' : selectedGem.id === 'crafts-makers-afternoon' ? 'shilparamam' : 'charminar'}`}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-[#16352A]/30 text-[#0D211A] text-sm font-medium hover:bg-[#F5F1E8] transition-colors"
                 >
                   <span>Place Details</span>
@@ -313,14 +312,49 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 4. Interactive Yatra Map Section */}
+      <section id="interactive-map" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="space-y-3 max-w-2xl">
+            <span className="text-xs font-semibold tracking-[0.2em] text-[#B86B4B] uppercase block">
+              Geographic Discovery
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0D211A]">
+              Interactive Yatra Map
+            </h2>
+            <p className="text-sm sm:text-base text-[#1D2521]/80 leading-relaxed">
+              Explore 23 verified destinations across Hyderabad and Telangana. Switch between India national context, regional Telangana scope, and historic Hyderabad city center with live pin interactions.
+            </p>
+          </div>
+          <Link
+            href="/explore"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16352A] hover:bg-[#0D211A] text-[#FAF8F5] text-sm font-bold shadow-sm transition-colors shrink-0"
+          >
+            <span>Explore the Full Map</span>
+            <ArrowRight className="w-4 h-4 text-[#DFB86C]" />
+          </Link>
+        </div>
+
+        <div className="rounded-2xl overflow-hidden border border-[#E8DFCF] bg-white p-4 shadow-sm space-y-4">
+          <HyderabadMap
+            places={filteredMapPlaces}
+            experiences={EXPERIENCES}
+            foods={[]}
+            selectedCategory={mapCategory}
+            onSelectCategory={setMapCategory}
+            height="500px"
+          />
+        </div>
+      </section>
+
       {/* 5. Local Mitra Section: "Don't just visit. Meet someone who knows." */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative bg-motif-arch">
         <div className="max-w-2xl mb-14 space-y-3">
           <span className="text-xs font-semibold tracking-[0.2em] text-[#B86B4B] uppercase block">
             The Human Connection
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0D211A]">
-            Don't just visit. Meet someone who knows.
+            Don&apos;t just visit. Meet someone who knows.
           </h2>
           <p className="text-sm sm:text-base text-[#1D2521]/80">
             Every Mitra carries a transparent Trust Passport — see exactly which verification steps are complete, pending, or not started. No hidden claims, no fake badges.
@@ -393,9 +427,14 @@ export default function HomePage() {
                 </div>
 
                 {/* Verification Badge */}
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#16352A]/10 text-[#16352A] text-xs font-semibold">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Verified Local Mitra</span>
+                <div className="flex items-center gap-2">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#16352A]/10 text-[#16352A] text-xs font-semibold">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Verified Workflow</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded bg-[#F5F1E8] border border-[#E8DFCF] text-[#16352A] text-[10px] font-bold uppercase tracking-wider">
+                    Demo Profile
+                  </span>
                 </div>
               </div>
 
@@ -415,7 +454,7 @@ export default function HomePage() {
       </section>
 
       {/* 6. Experience Section: "Travel like a local." */}
-      <section className="py-24 bg-[#F5F1E8] border-y border-[#E8DFCF]">
+      <section className="py-24 bg-section-warm border-y border-[#E8DFCF]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-14 space-y-3">
             <span className="text-xs font-semibold tracking-[0.2em] text-[#B86B4B] uppercase block">
@@ -496,7 +535,7 @@ export default function HomePage() {
               Find people who travel like you.
             </h2>
             <p className="text-sm sm:text-base text-[#1D2521]/80 leading-relaxed font-normal">
-              Travelling solo shouldn’t mean travelling lonely or compromising on remote trail safety. Yatra Mitra connects compatible travellers based on:
+              Travelling solo shouldn’t mean travelling lonely or compromising on remote trail safety. YATRAMITR connects compatible travellers based on:
             </p>
 
             <ul className="space-y-2.5 text-sm text-[#1D2521]/85">
@@ -597,7 +636,7 @@ export default function HomePage() {
       </section>
 
       {/* 8. Trust & Safety: "Built around trust." */}
-      <section id="trust" className="py-24 bg-[#F5F1E8] border-y border-[#E8DFCF]">
+      <section id="trust" className="py-24 bg-section-cream border-y border-[#E8DFCF] bg-motif-jali">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-14 space-y-3">
             <span className="text-xs font-semibold tracking-[0.2em] text-[#B86B4B] uppercase block">
@@ -749,12 +788,182 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 9b. Verified Reviews: 4 Cards in 1 Row on Desktop */}
+      <section className="py-20 bg-section-warm border-y border-[#E8DFCF]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+            <div className="space-y-2 max-w-2xl">
+              <span className="text-xs font-semibold tracking-[0.2em] text-[#B86B4B] uppercase block">
+                Community Verification
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0D211A]">
+                Traveller Stories & Verified Reviews
+              </h2>
+              <p className="text-xs sm:text-sm text-[#1D2521]/75">
+                Every review originates from a completed booking with verified checkpoint stamps — zero fabricated social proof.
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-forest-100 border border-forest-300 text-forest-900 text-xs font-bold shrink-0 self-start sm:self-auto">
+              <ShieldCheck className="w-4 h-4 text-forest-700" />
+              <span>100% Completed Yatras</span>
+            </span>
+          </div>
+
+          {/* 4 Cards strictly in 1 Row on Desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                name: 'Priya Sharma',
+                origin: 'Bengaluru',
+                experience: 'Quiet Heritage Lanes',
+                mitra: 'Mitra Ayesha',
+                rating: 5,
+                text: 'The residential courtyards around Charminar showed us an unhurried, living heritage side of Hyderabad we never knew existed.',
+              },
+              {
+                name: 'Rahul Verma',
+                origin: 'Mumbai',
+                experience: 'Golconda Fort Deep Walk',
+                mitra: 'Mitra Rahul',
+                rating: 5,
+                text: 'Hearing the clapping acoustics echo to Bala Hisar with someone who grew up studying the fort was truly unforgettable.',
+              },
+              {
+                name: 'Ananya Sen',
+                origin: 'Kolkata',
+                experience: 'Crafts & Makers Afternoon',
+                mitra: 'Mitra Meera',
+                rating: 5,
+                text: 'Meeting working Bidriware and Cheriyal scroll artisans directly, with zero commercial rush. Authentic and transparent.',
+              },
+              {
+                name: 'David Miller',
+                origin: 'London',
+                experience: 'Old City Food Trail',
+                mitra: 'Mitra Arjun',
+                rating: 5,
+                text: 'The Irani chai and Nizami breakfast tasting stops were vetted and hygienic. An extraordinary, respectful cultural morning.',
+              },
+            ].map((review, i) => (
+              <div
+                key={i}
+                className="p-5 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-forest-50 text-forest-800 text-[10px] font-bold">
+                      ✓ Verified Yatra
+                    </span>
+                    <span className="text-xs text-[#B8955A] font-bold">{'★'.repeat(review.rating)}</span>
+                  </div>
+                  <p className="text-xs text-[#1D2521]/80 leading-relaxed italic">
+                    &ldquo;{review.text}&rdquo;
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-[#E8DFCF]/70">
+                  <p className="text-xs font-bold text-[#0D211A]">{review.name}</p>
+                  <p className="text-[10px] text-[#1D2521]/60">{review.origin} · {review.experience}</p>
+                  <p className="text-[10px] text-forest-700 font-semibold mt-0.5">{review.mitra}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 9c. Emergency & Safety Section */}
+      <section id="emergency-safety-section" className="py-20 bg-section-paper border-b border-[#E8DFCF]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="space-y-2 max-w-2xl">
+              <span className="text-xs font-semibold tracking-[0.2em] text-[#B86B4B] uppercase block">
+                Traveler Protection & Crisis Response
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0D211A]">
+                Emergency & Safety Assistance
+              </h2>
+              <p className="text-xs sm:text-sm text-[#1D2521]/75">
+                Official Telangana and national statutory emergency hotlines. Accessible 24/7 over cellular voice without requiring internet connectivity.
+              </p>
+            </div>
+            <Link
+              href="/safety"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-forest-900 text-[#DFB86C] text-xs font-bold hover:bg-forest-950 transition-colors shrink-0 self-start sm:self-auto"
+            >
+              <span>Full Safety Protocol</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                number: '112',
+                tel: 'tel:112',
+                title: 'National Emergency',
+                desc: 'Police, fire and immediate rescue operations across Hyderabad & Telangana.',
+                color: 'text-red-700 bg-red-50 border-red-200 hover:border-red-400',
+                btnColor: 'bg-red-600 hover:bg-red-700 text-white',
+              },
+              {
+                number: '108',
+                tel: 'tel:108',
+                title: 'Ambulance Service',
+                desc: 'Telangana Government 24/7 medical emergencies and paramedic dispatch.',
+                color: 'text-amber-800 bg-amber-50 border-amber-200 hover:border-amber-400',
+                btnColor: 'bg-amber-600 hover:bg-amber-700 text-white',
+              },
+              {
+                number: '1091',
+                tel: 'tel:1091',
+                title: 'Women Helpline',
+                desc: 'Direct access to Hyderabad Police She Teams for round-the-clock safety.',
+                color: 'text-rose-800 bg-rose-50 border-rose-200 hover:border-rose-400',
+                btnColor: 'bg-rose-600 hover:bg-rose-700 text-white',
+              },
+              {
+                number: '1363',
+                tel: 'tel:1363',
+                title: 'Tourist Helpline',
+                desc: 'Ministry of Tourism multilingual helpline for visitor advisories and aid.',
+                color: 'text-forest-900 bg-forest-50 border-forest-200 hover:border-forest-400',
+                btnColor: 'bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A]',
+              },
+            ].map((item) => (
+              <div
+                key={item.number}
+                className="p-5 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-all hover:-translate-y-0.5"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-serif text-3xl font-black text-forest-950 tracking-tight">
+                      {item.number}
+                    </span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${item.color}`}>
+                      24/7 Hotline
+                    </span>
+                  </div>
+                  <h3 className="font-serif font-bold text-base text-forest-950">{item.title}</h3>
+                  <p className="text-xs text-charcoal-700 leading-relaxed">{item.desc}</p>
+                </div>
+                <a
+                  href={item.tel}
+                  className={`w-full py-2.5 rounded-xl text-center text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-95 ${item.btnColor}`}
+                >
+                  <span>Dial {item.number}</span>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 10. Become a Mitra CTA Section */}
-      <section className="relative py-24 sm:py-32 bg-[#0D211A] text-[#F5F1E8] overflow-hidden">
+      <section className="relative py-24 sm:py-32 bg-section-forest text-[#F5F1E8] overflow-hidden">
         {/* Subtle Background Image */}
         <div className="absolute inset-0 opacity-25">
           <Image
-            src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=2000&q=80"
+            src="/images/places/chowmahalla-palace.jpg"
             alt="Indian local community and village landscape"
             fill
             className="object-cover"
@@ -768,7 +977,7 @@ export default function HomePage() {
               Community Stewardship
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#FFFFFF] leading-tight">
-              Your hometown is someone's next adventure.
+              Your hometown is someone&apos;s next adventure.
             </h2>
             <p className="text-base sm:text-lg text-[#E8DFCF] leading-relaxed">
               Share your local knowledge, create authentic experiences and earn from tourism in your neighbourhood.
@@ -776,7 +985,7 @@ export default function HomePage() {
 
             <div className="pt-2">
               <Link
-                href="/become-a-mitra"
+                href="/become-mitra"
                 className="inline-flex items-center gap-2.5 px-8 py-4 rounded-md bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A] font-bold text-base shadow-lg transition-all transform hover:-translate-y-0.5"
               >
                 <span>Become a Local Mitra</span>

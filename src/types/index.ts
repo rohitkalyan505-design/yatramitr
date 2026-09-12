@@ -1,5 +1,5 @@
 // ============================================================
-// YATRA MITRA — DOMAIN MODEL
+// YITRAMITR — DOMAIN MODEL
 // Hyderabad MVP (Smart India Hackathon 2026)
 // ============================================================
 
@@ -63,6 +63,9 @@ export interface Place {
   guideLine?: string;
   latitude: number | null;
   longitude: number | null;
+  /** Explicit editorial guardrails for places that must not appear on the map. */
+  showOnMap?: boolean;
+  requiresVerification?: boolean;
   image: string;
   imageAttribution?: string;
   officialSource?: string;
@@ -77,6 +80,40 @@ export interface Place {
   verificationNote?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+// ---------- Food ----------
+
+export const FOOD_CATEGORIES = [
+  'Biryani',
+  'Irani Chai & Bakery',
+  'Street Food / Chaat',
+  'Tiffins',
+  'Haleem',
+  'Local Specialities',
+] as const;
+
+export type FoodCategory = (typeof FOOD_CATEGORIES)[number];
+
+export interface FoodEntry {
+  id: string;
+  name: string;
+  location: string;
+  category: FoodCategory;
+  description: string;
+  whatToTry: string[];
+  touristTip: string;
+  latitude: number | null;
+  longitude: number | null;
+  image: string;
+  /** Who supplied the photo: 'source_guide' (uploaded guide), 'editorial' (stock/licensed), 'none' */
+  imageSource: 'source_guide' | 'editorial' | 'none';
+  imageAttribution?: string;
+  priceLevel: '₹' | '₹₹' | '₹₹₹';
+  indicativePriceRange?: string;
+  tags: string[];
+  contentStatus: 'verified' | 'requires_verification';
+  verificationNote?: string;
 }
 
 // ---------- Experiences ----------

@@ -22,7 +22,7 @@ export default function MitraPage({ params }: { params: { id: string } }) {
   const homePlace = getPlaceById(mitra.homePlaceId);
 
   return (
-    <div className="space-y-12 pb-20">
+    <div className="min-h-screen bg-page-mitras space-y-12 pb-20">
       {/* Hero */}
       <section className="bg-[#0D211A] text-[#F5F1E8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">

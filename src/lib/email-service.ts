@@ -29,7 +29,7 @@ export function getSentEmailLog(): EmailMessage[] {
 
 export async function sendEmail(message: EmailMessage): Promise<EmailSendResult> {
   const apiKey = process.env.EMAIL_API_KEY;
-  const from = process.env.EMAIL_FROM ?? 'Yatra Mitra <onboarding@resend.dev>';
+  const from = process.env.EMAIL_FROM ?? 'YATRAMITR <onboarding@resend.dev>';
 
   if (!apiKey) {
     // Development fallback: record + log. Never blocks the app.
@@ -74,7 +74,7 @@ function baseTemplate(title: string, bodyHtml: string): string {
     <h2 style="color:#16352A;">${title}</h2>
     ${bodyHtml}
     <p style="font-size:12px;color:#6B7280;margin-top:32px;border-top:1px solid #E8DFCF;padding-top:12px;">
-      Yatra Mitra — responsible tourism, starting with Hyderabad. This is an MVP demonstration service.
+      YATRAMITR — responsible tourism, starting with Hyderabad. This is an MVP demonstration service.
     </p>
   </div>`;
 }
@@ -82,10 +82,10 @@ function baseTemplate(title: string, bodyHtml: string): string {
 export async function sendSignupConfirmation(to: string, name: string): Promise<EmailSendResult> {
   return sendEmail({
     to,
-    subject: 'Welcome to Yatra Mitra',
+    subject: 'Welcome to YATRAMITR',
     html: baseTemplate(
       'Welcome aboard, ' + name,
-      '<p>Your Yatra Mitra account is ready. Start by telling us how you like to travel — we\u2019ll match you with real Hyderabad experiences.</p>'
+      '<p>Your YATRAMITR account is ready. Start by telling us how you like to travel — we\u2019ll match you with real Hyderabad experiences.</p>'
     ),
   });
 }

@@ -53,13 +53,13 @@ export default function SignupPage() {
     'w-full p-3 pl-9 rounded-xl bg-sand-100 border border-sand-300 text-charcoal-800 font-medium focus:outline-none focus:border-forest-800';
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center pt-28 pb-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-page-auth flex items-center justify-center pt-28 pb-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-12 rounded-3xl overflow-hidden shadow-2xl border border-forest-900/10 bg-sand-50">
         {/* Left visual */}
         <div className="md:col-span-5 relative bg-forest-950 p-8 sm:p-10 text-[#F5F1E8] flex flex-col justify-between overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Golconda_Fort_%28June_2017%29.jpg/1280px-Golconda_Fort_%28June_2017%29.jpg"
+              src="/images/places/golconda-fort.jpg"
               alt="Golconda Fort, Hyderabad"
               fill
               className="object-cover opacity-30"
@@ -72,7 +72,7 @@ export default function SignupPage() {
               <div className="w-8 h-8 rounded-lg bg-forest-900 border border-[#B8955A]/40 flex items-center justify-center text-[#DFB86C]">
                 <Compass className="w-4 h-4" />
               </div>
-              <span className="font-serif font-bold text-xl">Yatra Mitra</span>
+              <span className="font-serif font-bold text-xl">YATRAMITR</span>
             </div>
             <p className="text-xs uppercase tracking-widest text-[#DFB86C] font-semibold">Travel with purpose</p>
           </div>

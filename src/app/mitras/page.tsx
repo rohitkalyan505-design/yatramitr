@@ -23,20 +23,21 @@ export default function MitrasPage() {
   const filtered = category === 'All' ? mitras : mitras.filter((m) => m.categories.includes(category));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
-      <div className="space-y-3 max-w-3xl">
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
-          <Users className="w-3.5 h-3.5" />
-          <span>The human connection</span>
+    <div className="min-h-screen bg-page-mitras">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
+        <div className="space-y-3 max-w-3xl relative bg-motif-arch">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
+            <Users className="w-3.5 h-3.5" />
+            <span>The human connection</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">
+            Don&apos;t just visit. Meet someone who knows.
+          </h1>
+          <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
+            Every Mitra carries a transparent Trust Passport — you can see exactly which verification steps are
+            complete, pending, or not started. No hidden claims.
+          </p>
         </div>
-        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">
-          Don&apos;t just visit. Meet someone who knows.
-        </h1>
-        <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
-          Every Mitra carries a transparent Trust Passport — you can see exactly which verification steps are
-          complete, pending, or not started. No hidden claims.
-        </p>
-      </div>
 
       <div className="p-4 rounded-xl bg-terracotta-50 border border-terracotta-200 text-xs text-terracotta-700">
         <strong>Transparency note:</strong> Mitra profiles in this MVP build are clearly-labelled DEMO accounts
@@ -91,5 +92,6 @@ export default function MitrasPage() {
         </div>
       )}
     </div>
+  </div>
   );
 }

@@ -7,7 +7,7 @@
 // ============================================================
 
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Sparkles, Bot, Database } from 'lucide-react';
+import { X, Send, Sparkles, Bot } from 'lucide-react';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -31,7 +31,7 @@ export default function AskMitraWidget() {
     {
       role: 'assistant',
       text:
-        'Namaste! I\u2019m **Ask Mitra** — your guide to Yatra Mitra. Ask me to find experiences, check prices, explain places, or help with safety. Everything I say comes from the platform\u2019s own Hyderabad database.',
+        'Namaste! I\u2019m **Ask Mitra** — your guide to YATRAMITR. Ask me to find experiences, check prices, explain places, or help with safety. Everything I say comes from the platform\u2019s own Hyderabad database.',
       suggestions: [
         { label: 'Find My Yatra', href: '/find-my-yatra' },
         { label: 'Explore the map', href: '/explore' },
@@ -87,8 +87,9 @@ export default function AskMitraWidget() {
       {/* Floating button */}
       {!open && (
         <button
+          id="ask-mitra-btn"
           onClick={() => setOpen(true)}
-          className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-bold shadow-xl transition-all hover:-translate-y-0.5"
+          className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-bold shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer"
         >
           <Sparkles className="w-4 h-4 text-[#DFB86C]" />
           <span>Ask Mitra</span>
@@ -200,15 +201,17 @@ export default function AskMitraWidget() {
             className="p-3 border-t border-[#E8DFCF] bg-white flex items-center gap-2 shrink-0"
           >
             <input
+              id="ask-mitra-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about places, prices, Mitras…"
               className="flex-1 px-4 py-2.5 rounded-full bg-[#F5F1E8] text-sm text-[#1D2521] focus:outline-none focus:ring-2 focus:ring-[#16352A]/30"
             />
             <button
+              id="ask-mitra-send-btn"
               type="submit"
               disabled={loading || !input.trim()}
-              className="w-10 h-10 rounded-full bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] flex items-center justify-center transition-colors disabled:opacity-50"
+              className="w-10 h-10 rounded-full bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] flex items-center justify-center transition-colors disabled:opacity-50 cursor-pointer"
               aria-label="Send"
             >
               <Send className="w-4 h-4" />

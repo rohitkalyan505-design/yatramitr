@@ -92,7 +92,8 @@ export function detectIntent(message: string): Intent {
   if (mentionsAmount && mentionsDuration && mentionsInterests) return 'find_experience';
 
   if (/mitra|guide|local expert|who can show/.test(m)) return 'find_mitra';
-  if (/plan|itinerary|build my yatra|plan my|day plan|schedule/.test(m)) return 'build_yatra';
+  if (/plan|itinerary|build.*yatra|plan my|day plan|schedule|1-day|one day|day trip|one-day/.test(m)) return 'build_yatra';
+  if (/what should i see|what can i do|things to do|places to visit/.test(m)) return 'find_experience';
   if (/history|historic|built|dynasty|kakatiya|qutb shahi|nizam|origin/.test(m) && !mentionsInterests) return 'explain_history';
   if (/tell me about|what is|what's|explain|where is|information about/.test(m)) {
     if (Object.keys(PLACE_WORDS).some((k) => m.includes(k))) return 'explain_place';
@@ -215,12 +216,12 @@ function explainPlace(placeId: string): AskMitraResult | null {
     '',
     `**History:** ${place.historicalSummary}`,
     '',
-    `**Tourism pressure:** ${place.tourismPressure} (Yatra Mitra editorial classification, not an official statistic)`,
+    `**Tourism pressure:** ${place.tourismPressure} (YATRAMITR editorial classification, not an official statistic)`,
     `**Suggested duration:** ${place.recommendedDuration} · **Best time:** ${place.bestTime}`,
     `**Timings/tickets:** ${place.timings ?? 'Check official source for latest information'}`,
   ];
   if (exps.length > 0) {
-    lines.push('', `**Yatra Mitra experiences here:** ${exps.map((e) => `${e.title} (₹${e.pricePerPerson})`).join(', ')}`);
+    lines.push('', `**YATRAMITR experiences here:** ${exps.map((e) => `${e.title} (₹${e.pricePerPerson})`).join(', ')}`);
   }
   const links: AskMitraResult['suggestions'] = [{ label: `Open ${place.name} page`, href: `/places/${place.id}` }];
   if (exps[0]) links.push({ label: exps[0].title, href: `/experiences/${exps[0].id}` });
@@ -273,7 +274,7 @@ function safetyAnswer(): AskMitraResult {
       '**Emergency services (India-wide): 112** (police, fire, medical)',
       '**Ambulance: 108**',
       '',
-      '**On an active Yatra Mitra trip:**',
+      '**On an active YATRAMITR trip:**',
       '• Open Live Trip Mode → the EMERGENCY button is always visible there',
       '• It can call emergency services, share your location, and contact your Mitra or a trusted contact',
       '• Your Mitra is trained to escalate locally and stays with the group',
@@ -342,7 +343,7 @@ function mitraAnswer(prefs: TravellerPreferences): AskMitraResult {
 function generalAnswer(): AskMitraResult {
   return {
     reply: [
-      'Namaste! I\'m **Ask Mitra** — your guide to Yatra Mitra. I can:',
+      'Namaste! I\'m **Ask Mitra** — your guide to YATRAMITR. I can:',
       '',
       '• **Find an experience** — "I have ₹800 and four hours and like history"',
       '• **Build my Yatra** — a personalised plan from our actual database',
@@ -367,18 +368,18 @@ function generalAnswer(): AskMitraResult {
 
 // ---------- Groq narration (optional polish layer) ----------
 
-async function groqNarrate(systemContext: string, userMessage: string, dataAnswer: string): Promise<string | null> {
+async function groqNarrate(systemContext: string, userMessage: string, _dataAnswer: string): Promise<string | null> {
   if (!groq) return null;
   try {
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.4,
       max_tokens: 500,
       messages: [
         {
           role: 'system',
           content:
-            'You are "Ask Mitra", the assistant of Yatra Mitra, a responsible-tourism platform for Hyderabad, India. ' +
+            'You are "Ask Mitra", the assistant of YATRAMITR, a responsible-tourism platform for Hyderabad, India. ' +
             'You are given VERIFIED PLATFORM DATA as context. Answer using ONLY that data. ' +
             'If the answer is not in the data, say you don\u2019t have that information and suggest checking the official Telangana Tourism website. ' +
             'Never invent places, prices, timings, statistics, reviews or verification claims. ' +
@@ -391,7 +392,8 @@ async function groqNarrate(systemContext: string, userMessage: string, dataAnswe
     });
     const text = completion.choices[0]?.message?.content?.trim();
     return text && text.length > 10 ? text : null;
-  } catch {
+  } catch (err) {
+    console.warn('[AskMitra Groq Fallback]:', err instanceof Error ? err.message : err);
     return null;
   }
 }

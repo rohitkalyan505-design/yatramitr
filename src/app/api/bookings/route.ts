@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createBooking, fetchBookingsForUser } from '@/lib/data-service';
 import { sendBookingConfirmation } from '@/lib/email-service';
+import { getAdminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +32,16 @@ export async function POST(req: Request) {
       isDemo,
     });
 
+    // Directly persist to Firestore via Admin SDK (bypasses security rules)
+    const adminDb = getAdminDb();
+    if (adminDb) {
+      try {
+        await adminDb.collection('bookings').doc(booking.id).set({ ...booking });
+      } catch (err) {
+        console.error('Admin Firestore write error:', err);
+      }
+    }
+
     // Transactional email (non-blocking; falls back silently when unconfigured)
     if (email) {
       await sendBookingConfirmation(email, {
@@ -55,9 +66,23 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
     if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 });
+
+    const adminDb = getAdminDb();
+    if (adminDb) {
+      try {
+        const snap = await adminDb.collection('bookings').where('userId', '==', userId).get();
+        if (!snap.empty) {
+          const bookings = snap.docs.map((d: any) => ({ ...(d.data() as any), id: d.id }));
+          return NextResponse.json({ count: bookings.length, bookings });
+        }
+      } catch (err) {
+        console.error('Admin Firestore read error:', err);
+      }
+    }
+
     const bookings = await fetchBookingsForUser(userId);
     return NextResponse.json({ count: bookings.length, bookings });
   } catch {
-    return NextResponse.json({ error: 'Unable to load bookings' }, { status: 500 });
+    return NextResponse.json({ error: 'Unable to fetch bookings' }, { status: 500 });
   }
 }

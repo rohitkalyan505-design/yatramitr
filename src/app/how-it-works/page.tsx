@@ -66,25 +66,26 @@ const STEPS = [
 
 export default function HowItWorksPage() {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-12">
-      <div className="space-y-3 max-w-3xl">
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
-          <Info className="w-3.5 h-3.5" />
-          <span>The complete loop</span>
+    <div className="min-h-screen bg-page-howitworks">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-12">
+        <div className="space-y-3 max-w-3xl relative bg-motif-arch">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
+            <Info className="w-3.5 h-3.5" />
+            <span>The complete loop</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">How YATRAMITR works</h1>
+          <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
+            One connected journey from &ldquo;I want to explore Hyderabad&rdquo; to a verified review — with
+            trust, pricing and safety built into every step.
+          </p>
         </div>
-        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">How Yatra Mitra works</h1>
-        <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
-          One connected journey from &ldquo;I want to explore Hyderabad&rdquo; to a verified review — with
-          trust, pricing and safety built into every step.
-        </p>
-      </div>
 
-      <div className="space-y-4">
-        {STEPS.map((step, i) => (
-          <div
-            key={step.title}
-            className="p-6 sm:p-8 rounded-2xl bg-white border border-[#E8DFCF] hover:border-[#B8955A]/50 transition-colors grid grid-cols-1 sm:grid-cols-12 gap-5 items-start"
-          >
+        <div className="space-y-4">
+          {STEPS.map((step, i) => (
+            <div
+              key={step.title}
+              className="p-6 sm:p-8 rounded-2xl bg-card-elevated grid grid-cols-1 sm:grid-cols-12 gap-5 items-start"
+            >
             <div className="sm:col-span-2 flex sm:flex-col items-center gap-3">
               <span className="font-serif text-4xl font-light text-[#B86B4B]">{String(i + 1).padStart(2, '0')}</span>
               <div className="w-10 h-10 rounded-xl bg-forest-50 text-forest-700 flex items-center justify-center shrink-0">
@@ -130,5 +131,6 @@ export default function HowItWorksPage() {
         </ul>
       </div>
     </div>
+  </div>
   );
 }

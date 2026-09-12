@@ -11,14 +11,13 @@
 
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import {
   ShieldCheck, MapPin, Phone, Share2, AlertTriangle, CheckCircle2,
-  Radio, ArrowLeft, X, Send, AlertCircle, Clock, Loader2, Crosshair,
+  Radio, ArrowLeft, X, AlertCircle, Loader2,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { fetchBookingsForUser, fetchTripForBooking, createTripForBooking } from '@/lib/data-service';
+import { fetchBookingsForUser, fetchBookingById, fetchTripForBooking, createTripForBooking } from '@/lib/data-service';
 import DemoBadge from '@/components/ui/DemoBadge';
 import { cn } from '@/lib/utils';
 import type { Booking, Trip } from '@/types';
@@ -51,6 +50,9 @@ function TripContent() {
       let target: Booking | undefined;
       if (requestedId) {
         target = bookings.find((b) => b.id === requestedId);
+        if (!target) {
+          target = await fetchBookingById(requestedId);
+        }
       }
       if (!target) {
         // Prefer an existing trip, then upcoming bookings, then the latest booking
@@ -139,7 +141,7 @@ function TripContent() {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] bg-forest-950 flex items-center justify-center">
+      <div className="min-h-screen bg-page-trip flex items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-[#F5F1E8]">
           <Loader2 className="w-8 h-8 animate-spin text-[#DFB86C]" />
           <span className="text-xs">Loading your trip…</span>
@@ -150,7 +152,7 @@ function TripContent() {
 
   if (!booking || !trip) {
     return (
-      <div className="min-h-[70vh] bg-forest-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-page-trip flex items-center justify-center px-4 pt-20 pb-20 bg-motif-arch">
         <div className="max-w-md text-center space-y-4 text-[#F5F1E8]">
           <AlertCircle className="w-12 h-12 text-[#DFB86C] mx-auto" />
           <h1 className="font-serif text-2xl font-bold">No active trip found</h1>
@@ -174,7 +176,7 @@ function TripContent() {
   const isComplete = trip.status === 'completed';
 
   return (
-    <div className="min-h-[85vh] bg-forest-950 text-[#F5F1E8] pb-20">
+    <div className="min-h-screen bg-page-trip text-[#F5F1E8] pt-20 sm:pt-24 pb-20">
       {/* Top banner */}
       <div className="border-b border-forest-800 bg-forest-900/90 py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -412,7 +414,7 @@ function TripContent() {
             </div>
 
             <p className="text-[10px] text-charcoal-600 leading-relaxed">
-              These safety actions are static platform features and do not depend on AI. Yatra Mitra does not
+              These safety actions are static platform features and do not depend on AI. YATRAMITR does not
               operate emergency services — in a real emergency, always call 112 first.
             </p>
           </div>

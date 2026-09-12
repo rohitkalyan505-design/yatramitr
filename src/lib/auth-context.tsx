@@ -49,7 +49,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const DEMO_PROFILE: UserProfile = {
   id: 'demo-user-local',
   name: 'Demo Traveller',
-  email: 'demo.traveller@yatramitra.demo',
+  email: 'demo.traveller@yitramitr.demo',
   role: 'traveller',
   isDemo: true,
   createdAt: '2026-01-01T00:00:00.000Z',

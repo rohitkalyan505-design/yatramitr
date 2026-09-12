@@ -24,7 +24,7 @@ export default function MitraCard({ mitra }: { mitra: Mitra }) {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-serif text-xl font-bold text-[#0D211A]">{mitra.name}</h3>
-              {mitra.isDemo && <DemoBadge />}
+              {mitra.isDemo && <DemoBadge label="DEMO PROFILE" />}
             </div>
             <p className="text-xs text-[#1D2521]/70">{mitra.location}</p>
             <div className="flex items-center gap-1.5 mt-1">
@@ -70,9 +70,15 @@ export default function MitraCard({ mitra }: { mitra: Mitra }) {
       <div className="pt-4 border-t border-[#E8DFCF] flex gap-2">
         <Link
           href={`/mitras/${mitra.id}`}
-          className="flex-1 text-center py-2.5 rounded-md bg-[#16352A] hover:bg-[#0D211A] text-[#F5F1E8] text-sm font-semibold transition-colors"
+          className="flex-1 text-center py-2.5 rounded-lg border border-[#16352A] text-[#16352A] hover:bg-[#16352A]/5 text-xs font-bold transition-colors"
         >
           View Trust Passport
+        </Link>
+        <Link
+          href={`/booking?mitraId=${mitra.id}`}
+          className="flex-1 text-center py-2.5 rounded-lg bg-[#B8955A] hover:bg-[#a6844c] text-[#0D211A] text-xs font-bold shadow-xs transition-colors"
+        >
+          Book Mitra
         </Link>
       </div>
     </div>

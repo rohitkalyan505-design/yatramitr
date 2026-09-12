@@ -27,21 +27,22 @@ export default function ExperiencesPage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
-      <div className="space-y-3 max-w-3xl">
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
-          <Compass className="w-3.5 h-3.5" />
-          <span>Host-crafted journeys</span>
+    <div className="min-h-screen bg-page-experiences">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 space-y-10">
+        <div className="space-y-3 max-w-3xl relative bg-motif-arch">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-terracotta-600">
+            <Compass className="w-3.5 h-3.5" />
+            <span>Host-crafted journeys</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">Experiences</h1>
+          <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
+            Small-group immersions guided by local Mitras. Every price shows its typical range and exactly
+            what&apos;s included — no hidden charges.
+          </p>
         </div>
-        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950">Experiences</h1>
-        <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed">
-          Small-group immersions guided by local Mitras. Every price shows its typical range and exactly
-          what&apos;s included — no hidden charges.
-        </p>
-      </div>
 
-      {/* Filters */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E8DFCF] shadow-sm space-y-4">
+        {/* Filters */}
+        <div className="p-5 sm:p-6 rounded-2xl bg-card-elevated space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           {(['All', ...PLACE_CATEGORIES] as const).map((cat) => (
             <button
@@ -113,5 +114,6 @@ export default function ExperiencesPage() {
         </Link>
       </div>
     </div>
+  </div>
   );
 }

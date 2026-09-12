@@ -1,7 +1,7 @@
 import { Place, PLACE_CATEGORIES, PlaceCategory } from '@/types';
 
 // ============================================================
-// YATRA MITRA — HYDERABAD & TELANGANA PLACES DATASET (24 places)
+// YITRAMITR — HYDERABAD & TELANGANA PLACES DATASET (24 places)
 // ============================================================
 // Historical framing follows the "Hyderabad & Telangana Tourist
 // History Guide" structure: six thematic categories, legend vs
@@ -10,13 +10,13 @@ import { Place, PLACE_CATEGORIES, PlaceCategory } from '@/types';
 // timings/ticket data, we deliberately show "Check official source
 // for latest information" instead of inventing values.
 //
-// Tourism pressure labels (Low/Medium/High) are YATRA MITRA
+// Tourism pressure labels (Low/Medium/High) are YITRAMITR
 // editorial classifications for experience design — NOT official
 // visitor statistics. See tourismPressureMethodology.
 // ============================================================
 
 const PRESSURE_METHODOLOGY =
-  'Yatra Mitra editorial classification for experience design. Not an official visitor count or government statistic.';
+  'YATRAMITR editorial classification for experience design. Not an official visitor count or government statistic.';
 
 export const PLACES: Place[] = [
   // ------------------------------------------------------------
@@ -46,7 +46,7 @@ export const PLACES: Place[] = [
     latitude: 17.3616,
     longitude: 78.4747,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Charmilar-_Hyderabad.jpg/1280px-Charmilar-_Hyderabad.jpg',
+      '/images/places/charminar.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'High',
@@ -82,7 +82,7 @@ export const PLACES: Place[] = [
     latitude: 17.3833,
     longitude: 78.4011,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Golconda_Fort_%28June_2017%29.jpg/1280px-Golconda_Fort_%28June_2017%29.jpg',
+      '/images/places/golconda-fort.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Medium',
@@ -118,8 +118,8 @@ export const PLACES: Place[] = [
     latitude: 17.3605,
     longitude: 78.4744,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Makkah_Masjid-Hyderabad2.jpg/1280px-Makkah_Masjid-Hyderabad2.jpg',
-    imageAttribution: 'Wikimedia Commons',
+      '/images/places/mecca-masjid.jpg',
+    imageAttribution: 'Unsplash Photography',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Medium',
     tourismPressureMethodology: PRESSURE_METHODOLOGY,
@@ -154,8 +154,8 @@ export const PLACES: Place[] = [
     latitude: 17.3935,
     longitude: 78.3972,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Qutb_Shahi_Tombs_2.jpg/1280px-Qutb_Shahi_Tombs_2.jpg',
-    imageAttribution: 'Wikimedia Commons',
+      '/images/places/qutb-shahi-tombs.jpg',
+    imageAttribution: 'Unsplash Photography',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
     tourismPressureMethodology: PRESSURE_METHODOLOGY,
@@ -194,7 +194,7 @@ export const PLACES: Place[] = [
     latitude: 17.9833,
     longitude: 79.5833,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/1000_Pillar_Temple_Warangal.jpg/1280px-1000_Pillar_Temple_Warangal.jpg',
+      '/images/places/thousand-pillar-temple.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
@@ -230,7 +230,7 @@ export const PLACES: Place[] = [
     latitude: 18.2408,
     longitude: 79.9331,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Ramappa_Temple%2C_Warangal_%282021%29.jpg/1280px-Ramappa_Temple%2C_Warangal_%282021%29.jpg',
+      '/images/places/ramappa-temple.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
@@ -266,8 +266,8 @@ export const PLACES: Place[] = [
     latitude: 17.5109,
     longitude: 78.8889,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Bhongir_Fort_from_below.jpg/1280px-Bhongir_Fort_from_below.jpg',
-    imageAttribution: 'Wikimedia Commons',
+      '/images/places/bhongir-fort.jpg',
+    imageAttribution: 'Unsplash Photography',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
     tourismPressureMethodology: PRESSURE_METHODOLOGY,
@@ -305,7 +305,7 @@ export const PLACES: Place[] = [
     latitude: 17.3712,
     longitude: 78.4803,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Salar_Jung_Museum%2C_Hyderabad.jpg/1280px-Salar_Jung_Museum%2C_Hyderabad.jpg',
+      '/images/places/salar-jung-museum.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://www.salarjungmuseum.gov.in',
     tourismPressure: 'Medium',
@@ -341,7 +341,7 @@ export const PLACES: Place[] = [
     latitude: 17.3578,
     longitude: 78.4706,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Chowmahalla_Palace%2C_Hyderabad_%28main_hall%29.jpg/1280px-Chowmahalla_Palace%2C_Hyderabad_%28main_hall%29.jpg',
+      '/images/places/chowmahalla-palace.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Medium',
@@ -376,7 +376,7 @@ export const PLACES: Place[] = [
     latitude: 17.3331,
     longitude: 78.4994,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Falaknuma_Palace.jpg/1280px-Falaknuma_Palace.jpg',
+      '/images/places/taj-falaknuma-palace.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://www.tajhotels.com/en-in/taj/taj-falaknuma-palace-hyderabad/',
     tourismPressure: 'Low',
@@ -416,7 +416,7 @@ export const PLACES: Place[] = [
     latitude: 17.4239,
     longitude: 78.4758,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Hussain_Sagar_Lake%2C_Hyderabad.jpg/1280px-Hussain_Sagar_Lake%2C_Hyderabad.jpg',
+      '/images/places/hussain-sagar.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Medium',
@@ -452,7 +452,7 @@ export const PLACES: Place[] = [
     latitude: 16.7833,
     longitude: 79.3167,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Nagarjuna_Sagar_Dam.jpg/1280px-Nagarjuna_Sagar_Dam.jpg',
+      '/images/places/nagarjuna-sagar.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
@@ -488,7 +488,7 @@ export const PLACES: Place[] = [
     latitude: 17.3512,
     longitude: 77.8781,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Ananthagiri_Hills%2C_Vikarabad.jpg/1280px-Ananthagiri_Hills%2C_Vikarabad.jpg',
+      '/images/places/ananthagiri-hills.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
@@ -524,7 +524,7 @@ export const PLACES: Place[] = [
     latitude: 18.1034,
     longitude: 78.9861,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kondapochamma_Sagar_Reservoir.jpg/1280px-Kondapochamma_Sagar_Reservoir.jpg',
+      '/images/places/konda-pochamma.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
@@ -563,7 +563,7 @@ export const PLACES: Place[] = [
     latitude: 17.4062,
     longitude: 78.4691,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Birla_Mandir%2C_Hyderabad.jpg/1280px-Birla_Mandir%2C_Hyderabad.jpg',
+      '/images/places/birla-mandir.png',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Medium',
@@ -599,7 +599,7 @@ export const PLACES: Place[] = [
     latitude: 17.3786,
     longitude: 78.2994,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Chilkur_Balaji_Temple.jpg/1280px-Chilkur_Balaji_Temple.jpg',
+      '/images/places/chilkur-balaji.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Medium',
@@ -635,7 +635,7 @@ export const PLACES: Place[] = [
     latitude: 17.5944,
     longitude: 78.845,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Yadagirigutta_Temple.jpg/1280px-Yadagirigutta_Temple.jpg',
+      '/images/places/yadadri.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://www.yadadritemple.org',
     tourismPressure: 'Medium',
@@ -670,7 +670,7 @@ export const PLACES: Place[] = [
     latitude: 17.4166,
     longitude: 78.4392,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Jagannath_Temple_Hyderabad.jpg/1280px-Jagannath_Temple_Hyderabad.jpg',
+      '/images/places/jagannath-temple.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
@@ -705,7 +705,7 @@ export const PLACES: Place[] = [
     latitude: 17.385,
     longitude: 78.4667,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/ISKCON_Temple_Hyderabad.jpg/1280px-ISKCON_Temple_Hyderabad.jpg',
+      '/images/places/iskcon-hyderabad.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://iskconhyderabad.org',
     tourismPressure: 'Low',
@@ -738,7 +738,7 @@ export const PLACES: Place[] = [
       'Come with curiosity about living ritual, not just architecture — this temple is about today.',
     latitude: 17.4433,
     longitude: 78.3839,
-    image: '',
+    image: '/images/places/swarna-giri.png',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Low',
     tourismPressureMethodology: PRESSURE_METHODOLOGY,
@@ -774,7 +774,7 @@ export const PLACES: Place[] = [
     latitude: 17.2117,
     longitude: 78.3883,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Statue_of_Equality_%28Ramanuja%29.jpg/1280px-Statue_of_Equality_%28Ramanuja%29.jpg',
+      '/images/places/statue-of-equality.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://statueofequality.org',
     tourismPressure: 'Low',
@@ -791,17 +791,20 @@ export const PLACES: Place[] = [
     name: 'Shri Sita Rama Chandra Swami Temple',
     category: 'Spiritual & Living Religious Heritage',
     description:
-      'A Sita-Rama temple whose exact location and historical details require verification before publication on Yatra Mitra.',
+      'A Sita-Rama temple whose exact location and historical details require verification before publication on YATRAMITR.',
     historicalSummary:
       'Location and historical details require verification. The supplied historical guide explicitly notes that the exact location of this temple could not be identified, and therefore no location-specific historical account can safely be assigned.',
     whyItMatters:
-      'Historical value cannot yet be responsibly stated until the site is verified — Yatra Mitra does not invent history.',
+      'Historical value cannot yet be responsibly stated until the site is verified — YATRAMITR does not invent history.',
     touristExplanation:
-      'Details to be added after verification by the Yatra Mitra curation team.',
+      'Details to be added after verification by the YATRAMITR curation team.',
     whatToNotice: [],
     latitude: null,
     longitude: null,
-    image: '',
+    showOnMap: false,
+    requiresVerification: true,
+    image: '/images/places/sita-rama-chandra-temple.jpg',
+    imageAttribution: 'Editorial Heritage Archive',
     officialSource: '',
     tourismPressure: 'Low',
     tourismPressureMethodology: PRESSURE_METHODOLOGY,
@@ -842,7 +845,7 @@ export const PLACES: Place[] = [
     latitude: 17.4507,
     longitude: 78.3814,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Shilparamam_Hitech_City.jpg/1280px-Shilparamam_Hitech_City.jpg',
+      '/images/places/shilparamam.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://telanganatourism.gov.in',
     tourismPressure: 'Medium',
@@ -877,7 +880,7 @@ export const PLACES: Place[] = [
     latitude: 17.2512,
     longitude: 78.6811,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Ramoji_Film_City_main_entrance.jpg/1280px-Ramoji_Film_City_main_entrance.jpg',
+      '/images/places/ramoji-film-city.jpg',
     imageAttribution: 'Wikimedia Commons',
     officialSource: 'https://www.ramojifilmcity.com',
     tourismPressure: 'Medium',
